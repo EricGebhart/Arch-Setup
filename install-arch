@@ -99,7 +99,7 @@ while getopts d:s:e:r:Fl:hl:u:p:n:Ph opt; do
             partition_devices=true
             format_devices=true
             ;;
-        (f)
+        (F)
             format_devices=true
             ;;
         (l)
