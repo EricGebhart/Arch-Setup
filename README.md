@@ -1,4 +1,4 @@
-# Arch-Setu # with my package-installer p
+# Arch-Setup 
 
 This repo consists of two scripts and some submodules.
 
