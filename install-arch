@@ -188,7 +188,7 @@ exec 2> >(tee "stderr.log")
 
 timedatectl set-ntp true
 
-if [ -n $device && -n $partition_devices ];then
+if [[ ( -v $device  && -v $partition_devices) ]];then
     ### Setup the disk and partitions ###
     swap_size=$(free --mebi | awk '/Mem:/ {printf $2}')
     swap_end=$(( $swap_size + 129 + 1 ))MiB
@@ -211,7 +211,7 @@ if [ -n $device && -n $partition_devices ];then
 fi
 
 # if we are supposed to partition or format stuff...
-if [ -n $partition_devices || -n $format_devices ];then
+if [[ (-v $partition_devices || -v $format_devices) ]];then
     wipefs "${boot_partition}"
     wipefs "${swap_partition}"
     wipefs "${root_partition}"
@@ -221,7 +221,7 @@ if [ -n $partition_devices || -n $format_devices ];then
     mkfs.f2fs -f "${root_partition}"
 fi
 
-if [ -n $swap_partition ];then
+if [[ -v $swap_partition ]];then
     echo Swap on $swap_partition
     swapon "${swap_partition}"
 fi
