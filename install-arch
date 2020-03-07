@@ -18,61 +18,61 @@ hostname='Archbox'
 
 
 help(){
-    print 'install-arch - helper for installing arch'
-    print ' '
-    print 'basic arch installer.'
-    print 'I recommend you follow the directions at archlinux.org'
-    print 'if you have not become completely bored with the process of installing'
-    print 'Arch Linux manually. This script is no replacement for following the good'
-    print 'instructions that can be found here:'
-    print 'https://wiki.archlinux.org/index.php/Installation_guide'
-    print ' '
-    print 'The default behavior is to not do any partitioning or formtting'
-    print 'of the hard drives. Provide your devices to this script and it will'
-    print 'take it from there.'
-    print ' '
-    print 'If you decide to let it do the partitioning and formatting'
-    print 'The default behavior is to make an efi, swap and root on a'
-    print 'single device. If not provided on the commandline you will be'
-    print 'prompted for the everything necessary except locale which will'
-    print 'default to en_US. After this script is done follow the directions'
-    print 'here as needed.'
-    print 'https://wiki.archlinux.org/index.php/Installation_guide#Localization'
-    print ' '
-    print 'If you decide to let it do the partitions it will create'
-    print 'An efi partition a swap and a root partition on the drive given.'
-    print 'This script does not manage dual boot, ie. shared efi,'
-    print 'automatically. For that, do your own partitioning and formatting'
-    print 'of your drives and provide them on the commandline afterward'
-    print 'If auto partitioning is chosen, the partition names are'
-    print 'calculated from the device name.'
-    print 'efi, root and swap devices are only needed if auto formatting'
-    print 'is not used.'
+    printf 'install-arch - helper for installing arch\n'
+    printf '\n '
+    printf 'basic arch installer.\n'
+    printf 'I recommend you follow the directions at archlinux.org\n\n'
+    printf 'if you have not become completely bored with the process of installing'
+    printf 'Arch Linux manually. This script is no replacement for following the good'
+    printf 'instructions that can be found here:\n'
+    printf 'https://wiki.archlinux.org/index.php/Installation_guide\n'
+    printf '\n '
+    printf 'The default behavior is to not do any partitioning or formtting'
+    printf 'of the hard drives. Provide your devices to this script and it will'
+    printf 'take it from there.\n'
+    printf '\n '
+    printf 'If you decide to let it do the partitioning and formatting'
+    printf 'The default behavior is to make an efi, swap and root on a'
+    printf 'single device. If not provided on the commandline you will be'
+    printf 'prompted for the everything necessary except locale which will'
+    printf 'default to en_US. After this script is done follow the directions'
+    printf 'here as needed.\n'
+    printf 'https://wiki.archlinux.org/index.php/Installation_guide#Localization\n'
+    printf '\n '
+    printf 'If you decide to let it do the partitions it will create'
+    printf 'An efi partition a swap and a root partition on the drive given.'
+    printf 'This script does not manage dual boot, ie. shared efi,'
+    printf 'automatically. For that, do your own partitioning and formatting'
+    printf 'of your drives and provide them on the commandline afterward'
+    printf 'If auto partitioning is chosen, the partition names are'
+    printf 'calculated from the device name.\n'
+    printf 'efi, root and swap devices are only needed if auto formatting'
+    printf 'is not used.\n'
 
 
-    print ' '
-    print " -d disk      partition this disk, default is none."
-    print " -s swap-dev  swap device partition, default is none."
-    print " -e efi-dev   EFI device partition, default: $efi_partition"
-    print " -r root-dev  root device partition, default: $root_partition"
-    print " -p           partition devices. - default is no"
-    print " -f           format devices. - default is no, true if partition is true."
-    print " -l locale    locale, default: $locale"
-    print " -n hostname  hostname, default: $hostname"
-    print " -t timezone  timezone, default: $timezone"
-    print " -u user      user name for new admin account, default $user"
-    print " -P password  pasword for root and new admin account, default $user"
-    print "              A prompt will be given if not given here."
-    print ' -h           This help text.'
-    print ' '
-    print ' '
+    printf '\n '
+    printf " -d disk      partition this disk, default is none.\n"
+    printf " -s swap-dev  swap device partition, default is none.\n"
+    printf " -e efi-dev   EFI device partition, default: $efi_partition\n"
+    printf " -r root-dev  root device partition, default: $root_partition\n"
+    printf " -p           partition devices. - default is no\n"
+    printf " -f           format devices. - default is no, true if partition is true.\n"
+    printf " -l locale    locale, default: $locale\n"
+    printf " -n hostname  hostname, default: $hostname\n"
+    printf " -t timezone  timezone, default: $timezone\n"
+    printf " -u user      user name for new admin account, default $user\n"
+    printf " -P password  pasword for root and new admin account, default $user\n"
+    printf "              A prompt will be given if not given here.\n"
+    printf ' -h           This help text.\n'
+    printf '\n '
+    printf '\n '
     exit
 }
 
 
 # $opt will hold the current option
-local opt
-while getopts d:s:e:r:fl:h:l:u:P:h opt; do
+opt=''
+while getopts d:s:e:r:fl:hl:u:P:h opt; do
     # loop continues till options finished
     # see which pattern $opt matches...
     case $opt in
@@ -116,15 +116,15 @@ while getopts d:s:e:r:fl:h:l:u:P:h opt; do
 	# matches a question mark
 	# (and nothing else, see text)
         (\?)
-            print "Bad option:" $*
-            print " "
+            printf "Bad option:" # $*
+            printf " "
             help
             return 1
             ;;
     esac
 done
 (( OPTIND > 1 )) && shift $(( OPTIND - 1 ))
-##print Remaining arguments are: $*
+##printf Remaining arguments are: $*
 
 # connect via wifi to the internet
 wifi-menu
@@ -197,7 +197,7 @@ timedatectl set-ntp true
 
 if [ -n $device && -n $partition_devices ];then
     ### Setup the disk and partitions ###
-    swap_size=$(free --mebi | awk '/Mem:/ {print $2}')
+    swap_size=$(free --mebi | awk '/Mem:/ {printf $2}')
     swap_end=$(( $swap_size + 129 + 1 ))MiB
 
     parted --script "${device}" -- mklabel gpt \
@@ -243,9 +243,11 @@ mount "${boot_partition}" /mnt/boot
 # git to continue install from my pkgbuilds on github.
 # zsh to create my user account before reboot.
 
-# keep it simple here.  just enough to have a base-system to reboot and configure.
+# keep it simple here.  just enough to have a base-system with the minimum tools
+# to reboot and configure.
 
-pacstrap /mnt base linux linux-firmware base-devel devtools network-manager git zsh
+pacstrap /mnt base linux linux-firmware base-devel devtools sudo network-manager git zsh dialog
+
 
 ### finish setting up the new system on /mnt so we can reboot.
 
@@ -261,13 +263,14 @@ EOF
 echo "/etc/hosts!!!"
 cat /etc/hosts
 
-echo "locale.conf $locale - locale-gen"
+echo "$locale -> /etc/locale.conf - locale-gen"
+echo " See https://wiki.archlinux.org/index.php/Installation_guide#Localization"
 arch-chroot /mnt echo "LANG=${locale}" > /mnt/etc/locale.conf
 arch-chroot /mnt locale-gen
 
-echo "usr/share/zoneinfo - timezone - ${timezone}"
+echo "usr/share/zoneinfo - ${timezone} -> /etc/localtime"
 arch-chroot /mnt ln -sf /usr/share/zoneinfo/${timezone} /etc/localtime
-echo "hwclock"
+echo "hwclock --systohc"
 arch-chroot /mnt hwclock --systohc
 
 echo "setting up systemd-boot"

@@ -15,77 +15,77 @@
 
 # setup repos.
 #----------------
-emacs-setup
-xmonad-setup
-dotfiles
-bc-extensions
-xmonad-log-applet
+# emacs-setup
+# xmonad-setup
+# dotfiles
+# bc-extensions
+# xmonad-log-applet
 
-function install-pkg {
+function install_pkg {
     cd arch-pkgs/$1; makepkg -si; cd -
 }
 
-function install-repo {
+function install_repo {
     cd $1; make ${2 || install}; cd ..
 }
 
-function install-xmonad {
+function install_xmonad {
     echo "Installing Xmonad and setup"
-    install-pkg X11
-    install-pkg X11-apps
-    install-pkg Xmonad
-    install-repo xmonad-setup
-    install-repo xmonad-setup xsession
+    install_pkg X11
+    install_pkg X11-apps
+    install_pkg Xmonad
+    install_repo xmonad-setup
+    install_repo xmonad-setup xsession
     cd xmonad-log-applet; make && sudo make install; cd -
 }
 
 
-function install-necessities {
+function install_necessities {
     echo "Installing necessities"
-    install-pkg necessities
-    install-pkg yay
+    install_pkg necessities
+    install_pkg yay
 
     # install emacs and accomplices
-    install-pkg emacs
+    install_pkg emacs
     # will attempt to copy mu4e site-lisp...
-    install-repo emacs-setup all
+    install_repo emacs-setup all
 
     # install dotfiles, etc.
-    install-repo dotfiles
-    install-repo bc-extensions
+    install_repo dotfiles
+    install_repo bc-extensions
 }
 
-function install-xfce {
+function install_xfce {
     echo "Installing Xfce4"
-    install-pkg X11
-    install-pkg X11-apps
-    install-pkg xfce
+    install_pkg X11
+    install_pkg X11-apps
+    install_pkg xfce
 }
 
-function install-devel {
+function install_devel {
     echo "Installing dev tools"
-    install-pkg devel
+    install_pkg devel
 }
 
-function install-tablet {
+function install_tablet {
     echo "Installing dev tools"
-    install-pkg tablet
+    install_pkg tablet
 }
 
-function install-nat-language {
+function install_nat_language {
     echo "Installing Natural language stuff"
-    install-pkg natural-language
+    install_pkg natural-language
 }
 
-function install-MBP {
+function install_MBP {
     echo "Installing mobile studio pro, nvidia, hidpi.."
-    install-pkg mobile-studio-pro
-    install-repo dotfiles hidpi
+    install_pkg mobile-studio-pro
+    install_repo dotfiles hidpi
 }
 
-function install-hidpi {
-    echo "adding high DPI settings to .Xresources.
-    install-repo dotfiles hidpi
+function install_hidpi {
+    echo "adding high DPI settings to .Xresources."
+    install_repo dotfiles hidpi
 }
 
 # create a menu.
@@ -101,43 +101,43 @@ options=(1 "Xmonad" on
 
 # display menu and get the choices
 choices=$("${cmd[@]}" "${options[@]}" 2>@1 >/dev/tty)
-clear
+# clear
 
 # install necessties always. dotfiles, emacs setup, ~/bin/
-install-necessities()
+install_necessities()
 
 for choice in $choices
 do
     case $choice in
-      1)
-        install-xmonad()
-        ;;
-      2)
-        install-xfce()
-        ;;
-      3)
-        install-devel()
-        ;;
-      4)
-        install-tablet()
-        ;;
-      5)
-        install-nat-language()
-        ;;
-      6)
-        install-MBP()
-        ;;
-      7)
-        install-hidpi()
-        ;;
-      8)
-        echo "Installing All"
-        install-xmonad()
-        install-xfce
-        install-devel
-        install-nat-language()
-        install-MBP()
-        install-hidpi()
-        ;;
+        1)
+            install_xmonad
+            ;;
+        2)
+            install_xfce
+            ;;
+        3)
+            install_devel
+            ;;
+        4)
+            install_tablet
+            ;;
+        5)
+            install_nat_language
+            ;;
+        6)
+            install_MBP
+            ;;
+        7)
+            install_hidpi
+            ;;
+        8)
+            echo "Installing All"
+            install_xmonad
+            install_xfce
+            install_devel
+            install_nat-language
+            install_MBP
+            install_hidpi
+            ;;
     esac
 done
