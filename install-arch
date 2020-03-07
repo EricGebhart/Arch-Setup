@@ -11,6 +11,7 @@ password=''
 disk=''
 efi_partition='/dev/sda1'
 root_partition='/dev/sda2'
+swap_partition=''
 locale='en_US.utf8'
 locale='en_US.utf8'
 timezone='Europe/Paris'
@@ -201,22 +202,22 @@ if [[ ( -v $device  && -v $partition_devices) ]];then
 
     # Simple globbing was not enough as on one device I needed to match /dev/mmcblk0p1
     # but not /dev/mmcblk0boot1 while being able to match /dev/sda1 on other devices.
-    boot_partition="$(ls ${device}* | grep -E "^${device}p?1$")"
+    efi_partition="$(ls ${device}* | grep -E "^${device}p?1$")"
     swap_partition="$(ls ${device}* | grep -E "^${device}p?2$")"
     root_partition="$(ls ${device}* | grep -E "^${device}p?3$")"
 
-    echo EFI boot is $boot_partition
+    echo EFI boot is $efi_partition
     echo swap is $swap_partition
     echo root is $root_partition
 fi
 
 # if we are supposed to partition or format stuff...
 if [[ (-v $partition_devices || -v $format_devices) ]];then
-    wipefs "${boot_partition}"
+    wipefs "${efi_partition}"
     wipefs "${swap_partition}"
     wipefs "${root_partition}"
 
-    mkfs.vfat -F32 "${boot_partition}"
+    mkfs.vfat -F32 "${efi_partition}"
     mkswap "${swap_partition}"
     mkfs.f2fs -f "${root_partition}"
 fi
@@ -229,7 +230,7 @@ fi
 echo Mounting root at /mnt and boot at /mnt/boot
 mount "${root_partition}" /mnt
 mkdir /mnt/boot
-mount "${boot_partition}" /mnt/boot
+mount "${efi_partition}" /mnt/boot
 
 ### Install and configure the basic system ###
 # need network manager for easier network on reboot.
