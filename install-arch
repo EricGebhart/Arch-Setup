@@ -78,38 +78,38 @@ while getopts d:s:e:r:fl:hl:u:P:h opt; do
     # see which pattern $opt matches...
     case $opt in
         (d)
-            disk= $OPTARG
+            disk=$OPTARG
             ;;
         (s)
-            swap_partition = $OPTARG
+            swap_partition=$OPTARG
             ;;
         (e)
-            efi_partition = $OPTARG
+            efi_partition=$OPTARG
             ;;
         (r)
-            root_partition = $OPTARG
+            root_partition=$OPTARG
             ;;
         (n)
-            hostname = $OPTARG
+            hostname=$OPTARG
             ;;
         (p)
-            partition_devices = true
-            format_devices = true
+            partition_devices=true
+            format_devices=true
             ;;
         (f)
-            format_devices = true
+            format_devices=true
             ;;
         (l)
-            locale = $OPTARG
+            locale=$OPTARG
             ;;
         (t)
-            timezone = $OPTARG
+            timezone=$OPTARG
             ;;
         (u)
-            user = $OPTARG
+            user=$OPTARG
             ;;
         (P)
-            password = $OPTARG
+            password=$OPTARG
             ;;
         (h)
             help
