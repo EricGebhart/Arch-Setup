@@ -228,9 +228,7 @@ if [[ -v $swap_partition ]];then
 fi
 
 echo Mounting root at /mnt and boot at /mnt/boot
-if [ ! grep -qs '/mnt ' /proc/mounts]; then
-    mount "${root_partition}" /mnt
-fi
+mount "${root_partition}" /mnt
 if [ ! -d /mnt/boot ];then
     mkdir /mnt/boot
 fi
