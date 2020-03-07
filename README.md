@@ -1,4 +1,4 @@
-# Arch-Setup
+# Arch-Setu # with my package-installer p
 
 This repo consists of two scripts and some submodules.
 
@@ -11,12 +11,16 @@ This repo consists of two scripts and some submodules.
  This is a basic arch installer. There isn't much to installing arch as it is,
  but after doing it a bunch of times it's nice to have something that automates things a bit.
  
- If you haven't done this manually a few times, following the instructions 
+ To get it after you've booted your Arch linux Live USB, do this get the script.
+ 
+ `curl https://raw.githubusercontent.com/EricGebhart/Arch-Setup/master/install-arch  > ./install-arch`
+ 
+ If you haven't installed Arch Linux manually a few times, following the instructions 
  [in the instllation guide](https://wiki.archlinux.org/index.php/Installation_guide#Localization)
  Then this script is possibly not for you.  Go earn some experience points over there first.
  
- I sort of like doing the Arch install manually, it's not like it's too difficult. Making
- the basic systemd-boot files can be a bit tedious but the most
+ I sort of like doing the Arch install manually, it's not like it's too difficult. 
+ Some of it can be a bit tedious but the most
  important things to me are really remembering the basic pacstrap packages I need, 
  creating my user account with wheel & sudo and cloning this repo with submodules 
  into my home directory so I can install the rest of the system after reboot.
@@ -32,11 +36,12 @@ This repo consists of two scripts and some submodules.
  For me the important bits are these commands. I always seem to forget somthing here.
 
     # install the base system pieces I want and need to get a basic install.
-    pacstrap /mnt base linux linux-firmware base-devel devtools sudo network-manager git zsh
+    pacstrap /mnt base linux linux-firmware base-devel devtools sudo network-manager git zsh dialog
 
-    # create my userid then go edit sudoers to give sudo to wheel.
+    # create my userid then go edit /etc/sudoers to give sudo to wheel.
     arch-chroot /mnt useradd -mU -s /usr/bin/zsh -G wheel,uucp,video,audio,storage,games,input "$user"
-    # fetch this repo into my new user account so I can install the rest of my stuff.
+    # fetch this repo into my new user account so I can install the rest of my stuff 
+    # with my package-installer after reboot.
     arch-chroot -u "$user" /mnt git clone --remote-submodules --recurse-submodules https://github.com/ericgebhart/Arch-Setup
  
  
