@@ -16,6 +16,8 @@ locale='en_US.utf8'
 timezone='Europe/Paris'
 user='eric'
 hostname='Archbox'
+partition_devices=false
+format_devices=false
 
 
 help(){
@@ -126,8 +128,6 @@ while getopts d:s:e:r:fl:hl:u:P:h opt; do
 done
 (( OPTIND > 1 )) && shift $(( OPTIND - 1 ))
 ##printf Remaining arguments are: $*
-
-pacman -Sy --noconfirm pacman-contrib
 
 ### Get infomation from user ###
 if [ -z $hostname ];then
