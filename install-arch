@@ -60,7 +60,7 @@ help(){
     printf " -e efi-dev   EFI device partition, default: $efi_partition\n"
     printf " -r root-dev  root device partition, default: $root_partition\n"
     printf " -P           partition devices. - default is no\n"
-    printf " -f           format devices. - default is no, true if partition is true.\n"
+    printf " -F           format devices. - default is no, true if partition is true.\n"
     printf " -l locale    locale, default: $locale\n"
     printf " -n hostname  hostname, default: $hostname\n"
     printf " -t timezone  timezone, default: $timezone\n"
@@ -76,7 +76,7 @@ help(){
 
 # $opt will hold the current option
 opt=''
-while getopts d:s:e:r:fl:hl:u:p:n:Ph opt; do
+while getopts d:s:e:r:Fl:hl:u:p:n:Ph opt; do
     # loop continues till options finished
     # see which pattern $opt matches...
     case $opt in
@@ -166,7 +166,7 @@ if [ -z $root_partition  &&  -z $partition_devices ];then
 fi
 
 # if partitioning is on, but disk is not set.
-if [ -z $disk  &&  -n $partition_devices ];then
+if [ -z $disk  &&  $partition_devices = true ];then
     devicelist=$(lsblk -dplnx size -o name,size | grep -Ev "boot|rpmb|loop" | tac)
     device=$(dialog --stdout --menu "Select installation disk" 0 0 0 ${devicelist}) || exit 1
 else
@@ -189,7 +189,7 @@ exec 2> >(tee "stderr.log")
 
 timedatectl set-ntp true
 
-if [[ ( -v $device  && -v $partition_devices) ]];then
+if [[ ( -v $device  && $partition_devices = true ) ]];then
     ### Setup the disk and partitions ###
     swap_size=$(free --mebi | awk '/Mem:/ {printf $2}')
     swap_end=$(( $swap_size + 129 + 1 ))MiB
@@ -212,7 +212,7 @@ if [[ ( -v $device  && -v $partition_devices) ]];then
 fi
 
 # if we are supposed to partition or format stuff...
-if [[ (-v $partition_devices || -v $format_devices) ]];then
+if [[ ($partition_devices = true || $format_devices = true) ]];then
     wipefs "${efi_partition}"
     wipefs "${swap_partition}"
     wipefs "${root_partition}"
