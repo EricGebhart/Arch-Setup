@@ -1,12 +1,13 @@
-#!/bin/bash
+#!/bin/zshh
 # WARNING: this script will destroy data on the selected disk.
 # This script can be run by executing the following:
 #   curl -sL https://git.io/vAoV8 | bash
 
 set -uo pipefail
-trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND"; exit $s' ERR
+trap 's=$?; echo "$0: Error on line "$LINENO":"; exit $s' ERR
 
 
+password=''
 disk=''
 efi_partition='/dev/sda1'
 root_partition='/dev/sda2'
@@ -127,11 +128,6 @@ done
 ##printf Remaining arguments are: $*
 
 pacman -Sy --noconfirm pacman-contrib
-
-echo "Updating mirror list"
-curl -s "$MIRRORLIST_URL" | \
-    sed -e 's/^#Server/Server/' -e '/^#/d' | \
-    rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
 
 ### Get infomation from user ###
 if [ -z $hostname ];then
