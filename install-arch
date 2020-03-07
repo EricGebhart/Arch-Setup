@@ -243,7 +243,7 @@ if [ ! grep -qs '/mnt ' /proc/mounts]; then
     # keep it simple here.  just enough to have a base-system with the minimum tools
     # to reboot and configure.
 
-    pacstrap /mnt base linux linux-firmware base-devel devtools sudo network-manager git zsh dialog
+    pacstrap /mnt base linux linux-firmware base-devel devtools sudo networkmanager git zsh dialog
 
 
     ### finish setting up the new system on /mnt so we can reboot.
