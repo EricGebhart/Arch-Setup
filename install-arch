@@ -230,81 +230,82 @@ fi
 echo Mounting root at /mnt and boot at /mnt/boot
 if [ ! grep -qs '/mnt ' /proc/mounts]; then
     mount "${root_partition}" /mnt
-    if [ ! -d /mnt/boot ];then
-        mkdir /mnt/boot
-    fi
-    mount "${efi_partition}" /mnt/boot
+fi
+if [ ! -d /mnt/boot ];then
+    mkdir /mnt/boot
+fi
+mount "${efi_partition}" /mnt/boot
 
-    ### Install and configure the basic system ###
-    # need network manager for easier network on reboot.
-    # git to continue install from my pkgbuilds on github.
-    # zsh to create my user account before reboot.
+### Install and configure the basic system ###
+# need network manager for easier network on reboot.
+# git to continue install from my pkgbuilds on github.
+# zsh to create my user account before reboot.
 
-    # keep it simple here.  just enough to have a base-system with the minimum tools
-    # to reboot and configure.
+# keep it simple here.  just enough to have a base-system with the minimum tools
+# to reboot and configure.
 
-    pacstrap /mnt base linux linux-firmware base-devel devtools sudo networkmanager git zsh dialog
+pacstrap /mnt base linux linux-firmware base-devel devtools sudo networkmanager git zsh dialog
 
 
-    ### finish setting up the new system on /mnt so we can reboot.
+### finish setting up the new system on /mnt so we can reboot.
 
-    genfstab -t PARTUUID /mnt >> /mnt/etc/fstab
+genfstab -t PARTUUID /mnt >> /mnt/etc/fstab
 
-    echo "${hostname}" > /mnt/etc/hostname
-    cat >>/etc/hosts <<EOF
+echo "${hostname}" > /mnt/etc/hostname
+cat >>/etc/hosts <<EOF
 127.0.0.1 localhost
 ::1 localhost
 127.0.0.1 ${hostname}.localdomain ${hostname}
 EOF
 
-    echo "/etc/hosts!!!"
-    cat /etc/hosts
+echo "/etc/hosts!!!"
+cat /etc/hosts
 
-    echo "$locale -> /etc/locale.conf - locale-gen"
-    echo " See https://wiki.archlinux.org/index.php/Installation_guide#Localization"
-    arch-chroot /mnt echo "LANG=${locale}" > /mnt/etc/locale.conf
-    arch-chroot /mnt locale-gen
+echo "$locale -> /etc/locale.conf - locale-gen"
+echo " See https://wiki.archlinux.org/index.php/Installation_guide#Localization"
+arch-chroot /mnt echo "LANG=${locale}" > /mnt/etc/locale.conf
+arch-chroot /mnt locale-gen
 
-    echo "usr/share/zoneinfo - ${timezone} -> /etc/localtime"
-    arch-chroot /mnt ln -sf /usr/share/zoneinfo/${timezone} /etc/localtime
-    echo "hwclock --systohc"
-    arch-chroot /mnt hwclock --systohc
+echo "usr/share/zoneinfo - ${timezone} -> /etc/localtime"
+arch-chroot /mnt ln -sf /usr/share/zoneinfo/${timezone} /etc/localtime
+echo "hwclock --systohc"
+arch-chroot /mnt hwclock --systohc
 
-    echo "setting up systemd-boot"
-    echo "default is '"arch"' with acpi=off"
+echo "setting up systemd-boot"
+echo "default is '"arch"' with acpi=off"
 
-    arch-chroot /mnt bootctl install
+arch-chroot /mnt bootctl install
 
-    cat <<EOF > /mnt/boot/loader/loader.conf
+cat <<EOF > /mnt/boot/loader/loader.conf
 default arch
 EOF
 
-    cat <<EOF > /mnt/boot/loader/entries/arch.conf
+cat <<EOF > /mnt/boot/loader/entries/arch.conf
 title    Arch Linux
 linux    /vmlinuz-linux
 initrd   /initramfs-linux.img
 options  root=PARTUUID=$(blkid -s PARTUUID -o value "$part_root") rw acpi=off
 EOF
 
-    echo "create ${user} in wheel with zsh."w
-    # create user in wheel with zsh.
-    arch-chroot /mnt useradd -mU -s /usr/bin/zsh -G wheel,uucp,video,audio,storage,games,input "$user"
-    arch-chroot /mnt chsh -s /usr/bin/zsh
+echo "create ${user} in wheel with zsh."w
+# create user in wheel with zsh.
+arch-chroot /mnt useradd -mU -s /usr/bin/zsh -G wheel,uucp,video,audio,storage,games,input "$user"
+arch-chroot /mnt chsh -s /usr/bin/zsh
 
-    echo "Give sudo to wheel"
-    # give sudo to wheel.
-    cat <<EOF > /etc/sudoers
+echo "Give sudo to wheel"
+# give sudo to wheel.
+cat <<EOF > /etc/sudoers
 %wheel ALL=(ALL) NOPASSWD: ALL
 EOF
 
-    echo "$user:$password" | chpasswd --root /mnt
-    echo "root:$password" | chpasswd --root /mnt
+echo "$user:$password" | chpasswd --root /mnt
+echo "root:$password" | chpasswd --root /mnt
 
-    echo "cloning arch-setup repo into ${user} for setup after reboot"
+echo "cloning arch-setup repo into ${user} for setup after reboot"
 
-    # checkout my arch-setup repo so it's there and ready to go after reboot.
+# checkout my arch-setup repo so it's there and ready to go after reboot.
 
-    arch-chroot -u "$user" /mnt git clone --remote-submodules --recurse-submodules https://github.com/ericgebhart/Arch-Setup
+arch-chroot -u "$user" /mnt git clone --remote-submodules --recurse-submodules https://github.com/ericgebhart/Arch-Setup
 
-    echo Ready to reboot. Look for the '"Arch Setup"' folder in ${user} to finish installing stuff.
-    echo umount /mnt; reboot ----  Croisez tes doigts.
+echo Ready to reboot. Look for the '"Arch Setup"' folder in ${user} to finish installing stuff.
+echo umount /mnt; reboot ----  Croisez tes doigts.
