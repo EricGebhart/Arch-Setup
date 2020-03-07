@@ -1,0 +1,143 @@
+#!/bin/bash
+
+# meta packages
+#---------------
+# devel - clojure, leiningen, python, perl, etc.
+# emacs - emacs, hunspell, languagetool, mu4e, isync, silver-surfer
+# mobile-studio-pro  - nvidia, hi DPI settings.
+# natural-language - languagetool, hunspell dictionaries,...
+# necessities  - basic stuff everyone should have.
+# tablet - krita, gimp, cellwriter, easystroke, onboard, Xournal
+# X11 - xorg, xorg-apps, ...
+# X11-apps - libreoffice, vivaldi, etc.
+# Xfce - xfce4, xfce4-goodies, network-manager-applet.
+# Xmonad - xmonad, haskell, xfce4-panel, network-manager-applet.
+
+# setup repos.
+#----------------
+emacs-setup
+xmonad-setup
+dotfiles
+bc-extensions
+xmonad-log-applet
+
+function install-pkg {
+    cd arch-pkgs/$1; makepkg -si; cd -
+}
+
+function install-repo {
+    cd $1; make ${2 || install}; cd ..
+}
+
+function install-xmonad {
+    echo "Installing Xmonad and setup"
+    install-pkg X11
+    install-pkg X11-apps
+    install-pkg Xmonad
+    install-repo xmonad-setup
+    install-repo xmonad-setup xsession
+    cd xmonad-log-applet; make && sudo make install; cd -
+}
+
+
+function install-necessities {
+    echo "Installing necessities"
+    install-pkg necessities
+    install-pkg yay
+
+    # install emacs and accomplices
+    install-pkg emacs
+    # will attempt to copy mu4e site-lisp...
+    install-repo emacs-setup all
+
+    # install dotfiles, etc.
+    install-repo dotfiles
+    install-repo bc-extensions
+}
+
+function install-xfce {
+    echo "Installing Xfce4"
+    install-pkg X11
+    install-pkg X11-apps
+    install-pkg xfce
+}
+
+function install-devel {
+    echo "Installing dev tools"
+    install-pkg devel
+}
+
+function install-tablet {
+    echo "Installing dev tools"
+    install-pkg tablet
+}
+
+function install-nat-language {
+    echo "Installing Natural language stuff"
+    install-pkg natural-language
+}
+
+function install-MBP {
+    echo "Installing mobile studio pro, nvidia, hidpi.."
+    install-pkg mobile-studio-pro
+    install-repo dotfiles hidpi
+}
+
+function install-hidpi {
+    echo "adding high DPI settings to .Xresources.
+    install-repo dotfiles hidpi
+}
+
+# create a menu.
+cmd=(dialog --separate-output --checklist "Select Packages to install" 22 77 16)
+options=(1 "Xmonad" on
+         2 "Xfce"   off
+         3 "devel"  on
+         4 "tablet" off
+         5 "natural-language"   on
+         6 "mobile-studio-pro"  off
+         7 "High DPI screen"    on
+         8 "All"    off )
+
+# display menu and get the choices
+choices=$("${cmd[@]}" "${options[@]}" 2>@1 >/dev/tty)
+clear
+
+# install necessties always. dotfiles, emacs setup, ~/bin/
+install-necessities()
+
+for choice in $choices
+do
+    case $choice in
+      1)
+        install-xmonad()
+        ;;
+      2)
+        install-xfce()
+        ;;
+      3)
+        install-devel()
+        ;;
+      4)
+        install-tablet()
+        ;;
+      5)
+        install-nat-language()
+        ;;
+      6)
+        install-MBP()
+        ;;
+      7)
+        install-hidpi()
+        ;;
+      8)
+        echo "Installing All"
+        install-xmonad()
+        install-xfce
+        install-devel
+        install-nat-language()
+        install-MBP()
+        install-hidpi()
+        ;;
+    esac
+done

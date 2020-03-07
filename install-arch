@@ -1,0 +1,310 @@
+#!/bin/bash
+# WARNING: this script will destroy data on the selected disk.
+# This script can be run by executing the following:
+#   curl -sL https://git.io/vAoV8 | bash
+
+set -uo pipefail
+trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND"; exit $s' ERR
+
+
+disk=''
+efi_partition='/dev/sda1'
+root_partition='/dev/sda2'
+locale='en_US.utf8'
+locale='en_US.utf8'
+timezone='Europe/Paris'
+user='eric'
+hostname='Archbox'
+
+
+help(){
+    print 'install-arch - helper for installing arch'
+    print ' '
+    print 'basic arch installer.'
+    print 'I recommend you follow the directions at archlinux.org'
+    print 'if you have not become completely bored with the process of installing'
+    print 'Arch Linux manually. This script is no replacement for following the good'
+    print 'instructions that can be found here:'
+    print 'https://wiki.archlinux.org/index.php/Installation_guide'
+    print ' '
+    print 'The default behavior is to not do any partitioning or formtting'
+    print 'of the hard drives. Provide your devices to this script and it will'
+    print 'take it from there.'
+    print ' '
+    print 'If you decide to let it do the partitioning and formatting'
+    print 'The default behavior is to make an efi, swap and root on a'
+    print 'single device. If not provided on the commandline you will be'
+    print 'prompted for the everything necessary except locale which will'
+    print 'default to en_US. After this script is done follow the directions'
+    print 'here as needed.'
+    print 'https://wiki.archlinux.org/index.php/Installation_guide#Localization'
+    print ' '
+    print 'If you decide to let it do the partitions it will create'
+    print 'An efi partition a swap and a root partition on the drive given.'
+    print 'This script does not manage dual boot, ie. shared efi,'
+    print 'automatically. For that, do your own partitioning and formatting'
+    print 'of your drives and provide them on the commandline afterward'
+    print 'If auto partitioning is chosen, the partition names are'
+    print 'calculated from the device name.'
+    print 'efi, root and swap devices are only needed if auto formatting'
+    print 'is not used.'
+
+
+    print ' '
+    print " -d disk      partition this disk, default is none."
+    print " -s swap-dev  swap device partition, default is none."
+    print " -e efi-dev   EFI device partition, default: $efi_partition"
+    print " -r root-dev  root device partition, default: $root_partition"
+    print " -p           partition devices. - default is no"
+    print " -f           format devices. - default is no, true if partition is true."
+    print " -l locale    locale, default: $locale"
+    print " -n hostname  hostname, default: $hostname"
+    print " -t timezone  timezone, default: $timezone"
+    print " -u user      user name for new admin account, default $user"
+    print " -P password  pasword for root and new admin account, default $user"
+    print "              A prompt will be given if not given here."
+    print ' -h           This help text.'
+    print ' '
+    print ' '
+    exit
+}
+
+
+# $opt will hold the current option
+local opt
+while getopts d:s:e:r:fl:h:l:u:P:h opt; do
+    # loop continues till options finished
+    # see which pattern $opt matches...
+    case $opt in
+        (d)
+            disk= $OPTARG
+            ;;
+        (s)
+            swap-partition = $OPTARG
+            ;;
+        (e)
+            efi-partition = $OPTARG
+            ;;
+        (r)
+            root-partition = $OPTARG
+            ;;
+        (n)
+            hostname = $OPTARG
+            ;;
+        (p)
+            partition-devices = true
+            format-devices = true
+            ;;
+        (f)
+            format-devices = true
+            ;;
+        (l)
+            locale = $OPTARG
+            ;;
+        (t)
+            timezone = $OPTARG
+            ;;
+        (u)
+            user = $OPTARG
+            ;;
+        (P)
+            password = $OPTARG
+            ;;
+        (h)
+            help
+            ;;
+	# matches a question mark
+	# (and nothing else, see text)
+        (\?)
+            print "Bad option:" $*
+            print " "
+            help
+            return 1
+            ;;
+    esac
+done
+(( OPTIND > 1 )) && shift $(( OPTIND - 1 ))
+##print Remaining arguments are: $*
+
+# connect via wifi to the internet
+wifi-menu
+
+pacman -Sy --noconfirm pacman-contrib
+
+echo "Updating mirror list"
+curl -s "$MIRRORLIST_URL" | \
+    sed -e 's/^#Server/Server/' -e '/^#/d' | \
+    rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
+
+### Get infomation from user ###
+if [ -z $hostname ];then
+    hostname=$(dialog --stdout --inputbox "Enter hostname" 0 0) || exit 1
+    clear
+    : ${hostname:?"hostname cannot be empty"}
+fi
+
+if [ -z $user ];then
+    user=$(dialog --stdout --inputbox "Enter admin username" 0 0) || exit 1
+    clear
+    : ${user:?"user cannot be empty"}
+fi
+
+if [ -z $password ];then
+    password=$(dialog --stdout --passwordbox "Enter admin password" 0 0) || exit 1
+    clear
+    : ${password:?"password cannot be empty"}
+    password2=$(dialog --stdout --passwordbox "Enter admin password again" 0 0) || exit 1
+    clear
+    [[ "$password" == "$password2" ]] || ( echo "Passwords did not match"; exit 1; )
+fi
+
+### Not partitioning, and no drive partitions specified.
+if [ -z $efi_partition  &&  -z $partition_devices ];then
+    devicelist=$(lsblk -nx size -o name,size)
+    efi_partition=$(dialog --stdout --menu "Select  efi-device" 0 0 0 ${devicelist}) || exit 1
+    clear
+fi
+
+if [ -z $root_partition  &&  -z $partition_devices ];then
+    devicelist=$(lsblk -nx size -o name,size)
+    root_partition=$(dialog --stdout --menu "Select  root-device" 0 0 0 ${devicelist}) || exit 1
+    clear
+fi
+
+# if partitioning is on, but disk is not set.
+if [ -z $disk  &&  -n $partition_devices ];then
+    devicelist=$(lsblk -dplnx size -o name,size | grep -Ev "boot|rpmb|loop" | tac)
+    device=$(dialog --stdout --menu "Select installation disk" 0 0 0 ${devicelist}) || exit 1
+else
+    device=$disk
+fi
+clear
+if [ -z $timezone  ];then
+    regions=$(ls /usr/share/zoneinfo/)
+    region=$(dialog --stdout --menu "Select  Region" 0 0 0 ${regions}) || exit 1
+    clear
+    cities=$(ls /usr/share/zoneinfo/${region})
+    city=$(dialog --stdout --menu "Select  City" 0 0 0 ${cities}) || exit 1
+    timezone=${region}/${city}
+    clear
+fi
+
+### Set up logging ###
+exec 1> >(tee "stdout.log")
+exec 2> >(tee "stderr.log")
+
+timedatectl set-ntp true
+
+if [ -n $device && -n $partition_devices ];then
+    ### Setup the disk and partitions ###
+    swap_size=$(free --mebi | awk '/Mem:/ {print $2}')
+    swap_end=$(( $swap_size + 129 + 1 ))MiB
+
+    parted --script "${device}" -- mklabel gpt \
+           mkpart ESP fat32 1Mib 129MiB \
+           set 1 boot on \
+           mkpart primary linux-swap 129MiB ${swap_end} \
+           mkpart primary ext4 ${swap_end} 100%
+
+    # Simple globbing was not enough as on one device I needed to match /dev/mmcblk0p1
+    # but not /dev/mmcblk0boot1 while being able to match /dev/sda1 on other devices.
+    boot_partition="$(ls ${device}* | grep -E "^${device}p?1$")"
+    swap_partition="$(ls ${device}* | grep -E "^${device}p?2$")"
+    root_partition="$(ls ${device}* | grep -E "^${device}p?3$")"
+
+    echo EFI boot is $boot_partition
+    echo swap is $swap_partition
+    echo root is $root_partition
+fi
+
+# if we are supposed to partition or format stuff...
+if [ -n $partition_devices || -n $format_devices ];then
+    wipefs "${boot_partition}"
+    wipefs "${swap_partition}"
+    wipefs "${root_partition}"
+
+    mkfs.vfat -F32 "${boot_partition}"
+    mkswap "${swap_partition}"
+    mkfs.f2fs -f "${root_partition}"
+fi
+
+if [ -n $swap_partition ];then
+    echo Swap on $swap_partition
+    swapon "${swap_partition}"
+fi
+
+echo Mounting root at /mnt and boot at /mnt/boot
+mount "${root_partition}" /mnt
+mkdir /mnt/boot
+mount "${boot_partition}" /mnt/boot
+
+### Install and configure the basic system ###
+# need network manager for easier network on reboot.
+# git to continue install from my pkgbuilds on github.
+# zsh to create my user account before reboot.
+
+# keep it simple here.  just enough to have a base-system to reboot and configure.
+
+pacstrap /mnt base linux linux-firmware base-devel devtools network-manager git zsh
+
+### finish setting up the new system on /mnt so we can reboot.
+
+genfstab -t PARTUUID /mnt >> /mnt/etc/fstab
+
+echo "${hostname}" > /mnt/etc/hostname
+cat >>/etc/hosts <<EOF
+127.0.0.1 localhost
+::1 localhost
+127.0.0.1 ${hostname}.localdomain ${hostname}
+EOF
+
+echo "/etc/hosts!!!"
+cat /etc/hosts
+
+echo "locale.conf $locale - locale-gen"
+arch-chroot /mnt echo "LANG=${locale}" > /mnt/etc/locale.conf
+arch-chroot /mnt locale-gen
+
+echo "usr/share/zoneinfo - timezone - ${timezone}"
+arch-chroot /mnt ln -sf /usr/share/zoneinfo/${timezone} /etc/localtime
+echo "hwclock"
+arch-chroot /mnt hwclock --systohc
+
+echo "setting up systemd-boot"
+echo "default is '"arch"' with acpi=off"
+
+arch-chroot /mnt bootctl install
+
+cat <<EOF > /mnt/boot/loader/loader.conf
+default arch
+EOF
+
+cat <<EOF > /mnt/boot/loader/entries/arch.conf
+title    Arch Linux
+linux    /vmlinuz-linux
+initrd   /initramfs-linux.img
+options  root=PARTUUID=$(blkid -s PARTUUID -o value "$part_root") rw acpi=off
+EOF
+
+echo "create ${user} in wheel with zsh."w
+# create user in wheel with zsh.
+arch-chroot /mnt useradd -mU -s /usr/bin/zsh -G wheel,uucp,video,audio,storage,games,input "$user"
+arch-chroot /mnt chsh -s /usr/bin/zsh
+
+echo "Give sudo to wheel"
+# give sudo to wheel.
+cat <<EOF > /etc/sudoers
+%wheel ALL=(ALL) NOPASSWD: ALL
+EOF
+
+echo "$user:$password" | chpasswd --root /mnt
+echo "root:$password" | chpasswd --root /mnt
+
+echo "cloning arch-setup repo into ${user} for setup after reboot"
+
+# checkout my arch-setup repo so it's there and ready to go after reboot.
+
+arch-chroot -u "$user" /mnt git clone --remote-submodules --recurse-submodules https://github.com/ericgebhart/Arch-Setup
+
+echo Ready to reboot. Look for the '"Arch Setup"' folder in ${user} to finish installing stuff.
+echo umount /mnt; reboot ----  Croisez tes doigts.

@@ -1,0 +1,18 @@
+[submodule "arch-pkgs"]
+	path = arch-pkgs
+	url = http://github.com/ericgebhart/arch-pkgs
+[submodule "emacs-setup"]
+	path = emacs-setup
+	url = http://github.com/ericgebhart/emacs-setup
+[submodule "xmonad-setup"]
+	path = xmonad-setup
+	url = http://github.com/ericgebhart/xmonad-setup
+[submodule "dotfiles"]
+	path = dotfiles
+	url = http://github.com/ericgebhart/dotfiles
+[submodule "xmonad-log-applet"]
+	path = xmonad-log-applet
+	url = http://github.com/ericgebhart/xmonad-log-applet
+[submodule "bc-extensions"]
+	path = bc-extensions
+	url = http://github.com/ericgebhart/bc-extensions
