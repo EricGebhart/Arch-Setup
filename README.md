@@ -11,7 +11,8 @@ This repo consists of two scripts and some submodules.
  This is a basic arch installer. There isn't much to installing arch as it is,
  but after doing it a bunch of times it's nice to have something that automates things a bit.
  
- To get it after you've booted your Arch linux Live USB, do this get the script.
+ To get it after you've booted your Arch linux Live USB connect to the internet, 
+ I usually use `wifi-menu`.  Then do this curl command to fetch the installer script.
  
  `curl https://raw.githubusercontent.com/EricGebhart/Arch-Setup/master/install-arch  > ./install-arch`
  
