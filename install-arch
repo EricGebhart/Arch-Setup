@@ -282,7 +282,7 @@ cat <<EOF > /mnt/boot/loader/entries/arch.conf
 title    Arch Linux
 linux    /vmlinuz-linux
 initrd   /initramfs-linux.img
-options  root=PARTUUID=$(blkid -s PARTUUID -o value "$part_root") rw acpi=off
+options  root=PARTUUID=$(blkid -s PARTUUID -o value "$root_partition") rw acpi=off
 EOF
 
 echo "create ${user} in wheel with zsh."w
@@ -292,7 +292,7 @@ arch-chroot /mnt chsh -s /usr/bin/zsh
 
 echo "Give sudo to wheel"
 # give sudo to wheel.
-cat <<EOF > /etc/sudoers
+cat <<EOF > /etc/sudoers.d/wheel
 %wheel ALL=(ALL) NOPASSWD: ALL
 EOF
 
