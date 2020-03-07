@@ -126,9 +126,6 @@ done
 (( OPTIND > 1 )) && shift $(( OPTIND - 1 ))
 ##printf Remaining arguments are: $*
 
-# connect via wifi to the internet
-wifi-menu
-
 pacman -Sy --noconfirm pacman-contrib
 
 echo "Updating mirror list"
