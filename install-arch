@@ -1,4 +1,4 @@
-#!/bin/zshh
+#!/bin/zsh
 # WARNING: this script will destroy data on the selected disk.
 # This script can be run by executing the following:
 #   curl -sL https://git.io/vAoV8 | bash
@@ -81,23 +81,23 @@ while getopts d:s:e:r:fl:hl:u:P:h opt; do
             disk= $OPTARG
             ;;
         (s)
-            swap-partition = $OPTARG
+            swap_partition = $OPTARG
             ;;
         (e)
-            efi-partition = $OPTARG
+            efi_partition = $OPTARG
             ;;
         (r)
-            root-partition = $OPTARG
+            root_partition = $OPTARG
             ;;
         (n)
             hostname = $OPTARG
             ;;
         (p)
-            partition-devices = true
-            format-devices = true
+            partition_devices = true
+            format_devices = true
             ;;
         (f)
-            format-devices = true
+            format_devices = true
             ;;
         (l)
             locale = $OPTARG
