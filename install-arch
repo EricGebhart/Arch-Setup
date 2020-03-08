@@ -9,6 +9,7 @@ trap 's=$?; echo "$0: Error on line "$LINENO":"; exit $s' ERR
 
 password=''
 disk=''
+prompt_timezone=''
 efi_partition=''
 root_partition=''
 swap_partition=''
@@ -177,11 +178,11 @@ else
     device=$disk
 fi
 clear
-if [ -z $timezone || $prompt_timezone = true ];then
-    regions=$(ls /usr/share/zoneinfo/)
+if [[ -z $timezone || $prompt_timezone = true ]];then
+    regions=$(ls /usr/share/zoneinfo | awk '{print NR, $0}')
     region=$(dialog --stdout --menu "Select  Region" 0 0 0 ${regions}) || exit 1
     clear
-    cities=$(ls /usr/share/zoneinfo/${region})
+    cities=$(ls /usr/share/zoneinfo/$region | awk '{print NR, $0}')
     city=$(dialog --stdout --menu "Select  City" 0 0 0 ${cities}) || exit 1
     timezone=${region}/${city}
     clear
@@ -227,7 +228,7 @@ if [[ ($partition_devices = true || $format_devices = true) ]];then
     if [[ ( -v $swap_partition ) ]];then
         mkswap "${swap_partition}"
     fi
-    mkfs.ext4 -f "${root_partition}"
+    mkfs.ext4 "${root_partition}"
 fi
 
 if [[ -v $swap_partition ]];then
@@ -255,8 +256,12 @@ pacstrap /mnt base linux linux-firmware base-devel devtools sudo networkmanager 
 
 ### finish setting up the new system on /mnt so we can reboot.
 
+echo =======================================================================
+echo 'genfstab'
+
 genfstab -t PARTUUID /mnt >> /mnt/etc/fstab
 
+echo ''
 echo "${hostname}" > /mnt/etc/hostname
 cat >>/etc/hosts <<EOF
 127.0.0.1 localhost
@@ -266,16 +271,19 @@ EOF
 
 echo "/etc/hosts!!!"
 cat /etc/hosts
+echo =======================================================================
 
 echo "$locale -> /etc/locale.conf - locale-gen"
 echo " See https://wiki.archlinux.org/index.php/Installation_guide#Localization"
 arch-chroot /mnt echo "LANG=${locale}" > /mnt/etc/locale.conf
 arch-chroot /mnt locale-gen
+echo =======================================================================
 
 echo "usr/share/zoneinfo - ${timezone} -> /etc/localtime"
 arch-chroot /mnt ln -sf /usr/share/zoneinfo/${timezone} /etc/localtime
 echo "hwclock --systohc"
 arch-chroot /mnt hwclock --systohc
+echo =======================================================================
 
 echo "setting up systemd-boot"
 echo "default is '"arch"' with acpi=off"
@@ -293,6 +301,7 @@ initrd   /initramfs-linux.img
 options  root=PARTUUID=$(blkid -s PARTUUID -o value "$root_partition") rw acpi=off
 EOF
 
+echo =======================================================================
 echo "create ${user} in wheel with zsh."w
 # create user in wheel with zsh.
 arch-chroot /mnt useradd -mU -s /usr/bin/zsh -G wheel,uucp,video,audio,storage,games,input "$user"
@@ -300,13 +309,17 @@ arch-chroot /mnt chsh -s /usr/bin/zsh
 
 echo "Give sudo to wheel"
 # give sudo to wheel.
-arch-chroot /mnt cat <<EOF > /etc/sudoers.d/wheel
+cat <<EOF > ./wheel
 %wheel ALL=(ALL) NOPASSWD: ALL
 EOF
 
-echo "$user:$password" | chpasswd --root /mnt
-echo "root:$password" | chpasswd --root /mnt
+cp ./wheel /mnt/etc/sudoers.d/
 
+
+echo "$user:$password" > chpasswd --root /mnt
+echo "root:$password" > chpasswd --root /mnt
+
+echo =======================================================================
 echo "cloning arch-setup repo into ${user} for setup after reboot"
 
 # checkout my arch-setup repo so it's there and ready to go after reboot.
