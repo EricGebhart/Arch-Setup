@@ -214,13 +214,13 @@ fi
 # if we are supposed to partition or format stuff...
 if [[ ($partition_devices = true || $format_devices = true) ]];then
     wipefs "${efi_partition}"
-    if ( -v $swap_partition );then
+    if [[ ( -v $swap_partition ) ]];then
         wipefs "${swap_partition}"
     fi
     wipefs "${root_partition}"
 
     mkfs.vfat -F32 "${efi_partition}"
-    if ( -v $swap_partition );then
+    if [[ ( -v $swap_partition ) ]];then
         mkswap "${swap_partition}"
     fi
     mkfs.f2fs -f "${root_partition}"
