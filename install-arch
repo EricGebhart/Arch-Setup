@@ -340,7 +340,7 @@ echo "cloning Arch-Setup repo into ${user} for setup after reboot"
 
 # checkout my arch-setup repo so it's there and ready to go after reboot.
 
-arch-chroot -u "$user" /mnt cd /home/eric; git clone --remote-submodules --recurse-submodules https://github.com/ericgebhart/Arch-Setup
+arch-chroot -u "$user" /mnt git clone --remote-submodules --recurse-submodules https://github.com/ericgebhart/Arch-Setup.git /home/$user/Arch-Setup
 
 echo '======================================================================='
 echo 'Setting passwords for root and $user'
