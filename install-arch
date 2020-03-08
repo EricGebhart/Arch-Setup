@@ -183,7 +183,7 @@ if [[ -z $timezone || $prompt_timezone = true ]];then
     region=$(dialog --stdout --menu "Select  Region" 0 0 0 ${regions}) || exit 1
     clear
     cities=$(ls /usr/share/zoneinfo/$region | awk '{print NR, $0}')
-    city=$(dialog --stdout --menu "Select  City" 0 0 0 ${cities}) || exit 1
+    city=$(dialog --stdout --menu "Select  City" 0 0 0 [${cities}]) || exit 1
     timezone=${region}/${city}
     clear
 fi
@@ -315,19 +315,21 @@ EOF
 
 cp ./wheel /mnt/etc/sudoers.d/
 
-
-echo "$user:$password" > chpasswd --root /mnt
-echo "root:$password" > chpasswd --root /mnt
-
 echo '======================================================================='
-echo "cloning arch-setup repo into ${user} for setup after reboot"
+echo "cloning Arch-Setup repo into ${user} for setup after reboot"
 
 # checkout my arch-setup repo so it's there and ready to go after reboot.
 
 arch-chroot -u "$user" /mnt git clone --remote-submodules --recurse-submodules https://github.com/ericgebhart/Arch-Setup
 
+echo '======================================================================='
+echo 'setting passwords'
+
+echo "$user:$password" > chpasswd --root /mnt
+echo "root:$password" > chpasswd --root /mnt
+
 umount /mnt/boot
 umount /mnt
 
-echo Ready to reboot. Look for the '"Arch Setup"' folder in ${user} to finish installing stuff.
+echo Ready to reboot. Look for the '"Arch-Setup"' folder in ${user} to finish installing stuff.
 echo Croisez tes doigts.
