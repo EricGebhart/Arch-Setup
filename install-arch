@@ -64,7 +64,7 @@ help(){
     printf " -F           format devices. - default is no, true if partition is true.\n"
     printf " -l locale    locale, default: $locale\n"
     printf " -n hostname  hostname, default: $hostname\n"
-    printf " -t timezone  timezone, default: $timezone\n"
+    printf " -t timezone  timezone, /usr/share/zoneinfo/<region/city>. default: $timezone\n"
     printf " -T           prompt for zoneinfo, default: $timezone\n"
     printf " -u user      user name for new admin account, default $user\n"
     printf " -p password  pasword for root and new admin account, default $user\n"
@@ -135,7 +135,7 @@ done
 (( OPTIND > 1 )) && shift $(( OPTIND - 1 ))
 ##printf Remaining arguments are: $*
 
-### Get infomation from user ###
+### Get infomation from user as needed or asked.###
 if [ -z $hostname ];then
     hostname=$(dialog --stdout --inputbox "Enter hostname" 0 0) || exit 1
     clear
@@ -157,34 +157,46 @@ if [ -z $password ];then
     [[ "$password" == "$password2" ]] || ( echo "Passwords did not match"; exit 1; )
 fi
 
-### Not partitioning, and no drive partitions specified.
+typeset -a devicelist
+devicelist=(`lsblk -nx size -o name,size`)
+echo "devicelist is:" $devicelist
+
+# Not partitioning, and no drive partitions specified for installation
 if [ -z $efi_partition  &&  -z $partition_devices ];then
-    devicelist=$(lsblk -nx size -o name,size)
-    efi_partition=$(dialog --stdout --menu "Select  efi-device" 0 0 0 ${devicelist}) || exit 1
+    efi_partition=$(dialog --stdout --menu "Select  efi-device" 0 0 0 "${devicelist[@]}") || exit 1
     clear
 fi
 
 if [ -z $root_partition  &&  -z $partition_devices ];then
-    devicelist=$(lsblk -nx size -o name,size)
-    root_partition=$(dialog --stdout --menu "Select  root-device" 0 0 0 ${devicelist}) || exit 1
+    root_partition=$(dialog --stdout --menu "Select  root-device" 0 0 0 "${devicelist[@]}") || exit 1
     clear
 fi
 
 # if partitioning is on, but disk is not set.
 if [ -z $disk  &&  $partition_devices = true ];then
-    devicelist=$(lsblk -dplnx size -o name,size | grep -Ev "boot|rpmb|loop" | tac)
-    device=$(dialog --stdout --menu "Select installation disk" 0 0 0 ${devicelist}) || exit 1
+    # if partitioning is on, but disk is not set.
+    devicelist=(`lsblk -dplnx size -o name,size | grep -Ev "boot|rpmb|loop" | tac`)
+    echo "devicelist is:" $devicelist
+    device=$(dialog --menu --stdout "Select installation disk" 0 0 0 "${devicelist[@]}") || exit 1
+    clear
 else
     device=$disk
 fi
-clear
+
+# create the path to the zoneinfo timezone if we don't have one.
 if [[ -z $timezone || $prompt_timezone = true ]];then
-    regions=$(ls /usr/share/zoneinfo | awk '{print NR, $0}')
-    region=$(dialog --stdout --menu "Select  Region" 0 0 0 ${regions}) || exit 1
-    clear
-    cities=$(ls /usr/share/zoneinfo/$region | awk '{print NR, $0}')
-    city=$(dialog --stdout --menu "Select  City" 0 0 0 [${cities}]) || exit 1
-    timezone=${region}/${city}
+    regions=(`ls /usr/share/zoneinfo`)
+    echo "regions are:" $regions
+    region=$(dialog --no-items --stdout --menu "Select  Region" 0 0 0 "${regions[@]}") || exit 1
+
+    region_name=${regions[$region]}
+    echo $regions[$region]
+    echo $region_name
+
+    cities=(`ls /usr/share/zoneinfo/$region`)
+    echo "cities are:" $cities
+    city=$(dialog --no-items --stdout --menu "Select  City" 0 0 0 "${cities[@]}") || exit 1
+    timezone=${region_name}/${city}
     clear
 fi
 
@@ -194,6 +206,7 @@ exec 2> >(tee "stderr.log")
 
 timedatectl set-ntp true
 
+# partition the device/drive into efi, swap and root.
 if [[ ( -v $device  && $partition_devices = true ) ]];then
     ### Setup the disk and partitions ###
     swap_size=$(free --mebi | awk '/Mem:/ {printf $2}')
@@ -216,7 +229,7 @@ if [[ ( -v $device  && $partition_devices = true ) ]];then
     echo root is $root_partition
 fi
 
-# if we are supposed to partition or format stuff...
+# if we are supposed to partition or format. format, mkswap as needed.
 if [[ ($partition_devices = true || $format_devices = true) ]];then
     wipefs "${efi_partition}"
     if [[ ( -v $swap_partition ) ]];then
@@ -236,12 +249,17 @@ if [[ -v $swap_partition ]];then
     swapon "${swap_partition}"
 fi
 
-echo Mounting root at /mnt and boot at /mnt/boot
+echo "Mounting root at /mnt and boot at /mnt/boot"
 mount "${root_partition}" /mnt
 if [ ! -d /mnt/boot ];then
     mkdir /mnt/boot
 fi
 mount "${efi_partition}" /mnt/boot
+
+echo '======================================================================='
+echo 'pacstrap. install the basics.'
+echo '======================================================================='
+echo ' '
 
 ### Install and configure the basic system ###
 # need network manager for easier network on reboot.
@@ -255,7 +273,9 @@ pacstrap /mnt base linux linux-firmware base-devel devtools sudo networkmanager 
 
 
 ### finish setting up the new system on /mnt so we can reboot.
-
+echo ' '
+echo ' '
+echo '======================================================================='
 echo '======================================================================='
 echo 'genfstab'
 
@@ -279,7 +299,7 @@ arch-chroot /mnt echo "LANG=${locale}" > /mnt/etc/locale.conf
 arch-chroot /mnt locale-gen
 echo '======================================================================='
 
-echo "usr/share/zoneinfo - ${timezone} -> /etc/localtime"
+echo "usr/share/zoneinfo/${timezone} -> /etc/localtime"
 arch-chroot /mnt ln -sf /usr/share/zoneinfo/${timezone} /etc/localtime
 echo "hwclock --systohc"
 arch-chroot /mnt hwclock --systohc
