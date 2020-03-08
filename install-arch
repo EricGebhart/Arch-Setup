@@ -321,6 +321,9 @@ initrd   /initramfs-linux.img
 options  root=PARTUUID=$(blkid -s PARTUUID -o value "$root_partition") rw acpi=off
 EOF
 
+bootctl list
+
+echo " "
 echo '======================================================================='
 echo "create ${user} in wheel with zsh."w
 # create user in wheel with zsh.
@@ -343,7 +346,7 @@ echo "cloning Arch-Setup repo into ${user} for setup after reboot"
 arch-chroot -u "$user" /mnt git clone --remote-submodules --recurse-submodules https://github.com/ericgebhart/Arch-Setup.git /home/$user/Arch-Setup
 
 echo '======================================================================='
-echo 'Setting passwords for root and $user'
+echo "Setting passwords for root and ${user}"
 
 echo "$user:$password" > chpasswd --root /mnt
 echo "root:$password" > chpasswd --root /mnt
