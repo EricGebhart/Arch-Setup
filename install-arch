@@ -9,8 +9,8 @@ trap 's=$?; echo "$0: Error on line "$LINENO":"; exit $s' ERR
 
 password=''
 disk=''
-efi_partition='/dev/sda1'
-root_partition='/dev/sda2'
+efi_partition=''
+root_partition=''
 swap_partition=''
 locale='en_US.utf8'
 locale='en_US.utf8'
@@ -64,6 +64,7 @@ help(){
     printf " -l locale    locale, default: $locale\n"
     printf " -n hostname  hostname, default: $hostname\n"
     printf " -t timezone  timezone, default: $timezone\n"
+    printf " -T           prompt for zoneinfo, default: $timezone\n"
     printf " -u user      user name for new admin account, default $user\n"
     printf " -p password  pasword for root and new admin account, default $user\n"
     printf "              A prompt will be given if not given here.\n"
@@ -76,7 +77,7 @@ help(){
 
 # $opt will hold the current option
 opt=''
-while getopts d:s:e:r:Fl:hl:u:p:n:Ph opt; do
+while getopts d:s:e:r:Fl:hl:u:p:n:t:TPh opt; do
     # loop continues till options finished
     # see which pattern $opt matches...
     case $opt in
@@ -107,6 +108,9 @@ while getopts d:s:e:r:Fl:hl:u:p:n:Ph opt; do
             ;;
         (t)
             timezone=$OPTARG
+            ;;
+        (T)
+            prompt_timezone=true
             ;;
         (u)
             user=$OPTARG
@@ -173,7 +177,7 @@ else
     device=$disk
 fi
 clear
-if [ -z $timezone  ];then
+if [ -z $timezone || $prompt_timezone = true ];then
     regions=$(ls /usr/share/zoneinfo/)
     region=$(dialog --stdout --menu "Select  Region" 0 0 0 ${regions}) || exit 1
     clear
@@ -223,7 +227,7 @@ if [[ ($partition_devices = true || $format_devices = true) ]];then
     if [[ ( -v $swap_partition ) ]];then
         mkswap "${swap_partition}"
     fi
-    mkfs.f2fs -f "${root_partition}"
+    mkfs.ext4 -f "${root_partition}"
 fi
 
 if [[ -v $swap_partition ]];then
@@ -296,7 +300,7 @@ arch-chroot /mnt chsh -s /usr/bin/zsh
 
 echo "Give sudo to wheel"
 # give sudo to wheel.
-cat <<EOF > /mnt/etc/sudoers.d/wheel
+arch-chroot /mnt cat <<EOF > /etc/sudoers.d/wheel
 %wheel ALL=(ALL) NOPASSWD: ALL
 EOF
 
@@ -309,5 +313,8 @@ echo "cloning arch-setup repo into ${user} for setup after reboot"
 
 arch-chroot -u "$user" /mnt git clone --remote-submodules --recurse-submodules https://github.com/ericgebhart/Arch-Setup
 
+umount /mnt/boot
+umount /mnt
+
 echo Ready to reboot. Look for the '"Arch Setup"' folder in ${user} to finish installing stuff.
-echo umount /mnt; reboot ----  Croisez tes doigts.
+echo Croisez tes doigts.
