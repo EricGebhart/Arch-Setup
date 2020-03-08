@@ -296,7 +296,7 @@ arch-chroot /mnt chsh -s /usr/bin/zsh
 
 echo "Give sudo to wheel"
 # give sudo to wheel.
-cat <<EOF > /etc/sudoers.d/wheel
+cat <<EOF > /mnt/etc/sudoers.d/wheel
 %wheel ALL=(ALL) NOPASSWD: ALL
 EOF
 
