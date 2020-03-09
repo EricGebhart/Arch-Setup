@@ -67,8 +67,6 @@ help(){
     printf " -t timezone  timezone, /usr/share/zoneinfo/<region/city>. default: $timezone\n"
     printf " -T           prompt for zoneinfo, default: $timezone\n"
     printf " -u user      user name for new admin account, default $user\n"
-    printf " -p password  pasword for root and new admin account, default $user\n"
-    printf "              A prompt will be given if not given here.\n"
     printf ' -h           This help text.\n'
     printf '\n '
     printf '\n '
@@ -78,7 +76,7 @@ help(){
 
 # $opt will hold the current option
 opt=''
-while getopts d:s:e:r:Fl:hl:u:p:n:t:TPh opt; do
+while getopts d:s:e:r:Fl:hl:u:n:t:TPh opt; do
     # loop continues till options finished
     # see which pattern $opt matches...
     case $opt in
@@ -116,9 +114,6 @@ while getopts d:s:e:r:Fl:hl:u:p:n:t:TPh opt; do
         (u)
             user=$OPTARG
             ;;
-        (p)
-            password=$OPTARG
-            ;;
         (h)
             help
             ;;
@@ -148,14 +143,14 @@ if [ -z $user ];then
     : ${user:?"user cannot be empty"}
 fi
 
-if [ -z $password ];then
-    password=$(dialog --stdout --passwordbox "Enter admin password" 0 0) || exit 1
-    clear
-    : ${password:?"password cannot be empty"}
-    password2=$(dialog --stdout --passwordbox "Enter admin password again" 0 0) || exit 1
-    clear
-    [[ "$password" == "$password2" ]] || ( echo "Passwords did not match"; exit 1; )
-fi
+# if [ -z $password ];then
+#     password=$(dialog --stdout --passwordbox "Enter admin password" 0 0) || exit 1
+#     clear
+#     : ${password:?"password cannot be empty"}
+#     password2=$(dialog --stdout --passwordbox "Enter admin password again" 0 0) || exit 1
+#     clear
+#     [[ "$password" == "$password2" ]] || ( echo "Passwords did not match"; exit 1; )
+# fi
 
 typeset -a devicelist
 devicelist=(`lsblk -nx size -o name,size`)
@@ -313,6 +308,7 @@ arch-chroot /mnt bootctl install
 cat <<EOF > /mnt/boot/loader/loader.conf
 timeout 10
 default arch
+console-mode max
 EOF
 
 cat <<EOF > /mnt/boot/loader/entries/arch.conf
@@ -328,7 +324,7 @@ echo " "
 echo '======================================================================='
 echo "create ${user} in wheel with zsh."w
 # create user in wheel with zsh.
-arch-chroot /mnt useradd -mU -p ${password} -s /usr/bin/zsh -G wheel,uucp,video,audio,storage,games,input ${user}
+arch-chroot /mnt useradd -mU -s /usr/bin/zsh -G wheel,uucp,video,audio,storage,games,input ${user}
 arch-chroot /mnt chsh -s /usr/bin/zsh
 
 echo "Give sudo to wheel"
@@ -366,5 +362,9 @@ arch-chroot /mnt passwd
 umount /mnt/boot
 umount /mnt
 
+echo " "
+echo '======================================================================='
 echo Ready to reboot. Look for the '"Arch-Setup"' folder in /home/${user} to finish installing stuff.
 echo Croisez tes doigts.
+echo '======================================================================='
+echo " "
