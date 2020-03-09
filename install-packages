@@ -93,7 +93,7 @@ cmd=(dialog --stdout --separate-output --checklist "Select Packages to install" 
 options=(1 "Xmonad" on
          2 "Xfce"   off
          3 "devel"  on
-         4 "tablet" off
+         4 "tablet" on
          5 "natural-language"   on
          6 "mobile-studio-pro"  off
          7 "High DPI screen"    on
@@ -101,11 +101,10 @@ options=(1 "Xmonad" on
 
 # display menu and get the choices
 choices=$("${cmd[@]}" "${options[@]}")
-echo "Choices are: ${choices[@]}"
 # clear
 
 # install necessties always. dotfiles, emacs setup, ~/bin/
-install_necessities()
+install_necessities
 
 for choice in ${choices[@]}
 do
