@@ -89,7 +89,7 @@ function install_hidpi {
 }
 
 # create a menu.
-cmd=(dialog --separate-output --checklist "Select Packages to install" 22 77 16)
+cmd=(dialog --stdout --separate-output --checklist "Select Packages to install" 22 77 16)
 options=(1 "Xmonad" on
          2 "Xfce"   off
          3 "devel"  on
@@ -100,13 +100,14 @@ options=(1 "Xmonad" on
          8 "All"    off )
 
 # display menu and get the choices
-choices=$("${cmd[@]}" "${options[@]}" 2>@1 >/dev/tty)
+choices=$("${cmd[@]}" "${options[@]}")
+echo "Choices are: ${choices[@]}"
 # clear
 
 # install necessties always. dotfiles, emacs setup, ~/bin/
 install_necessities()
 
-for choice in $choices
+for choice in ${choices[@]}
 do
     case $choice in
         1)
