@@ -328,7 +328,7 @@ echo " "
 echo '======================================================================='
 echo "create ${user} in wheel with zsh."w
 # create user in wheel with zsh.
-arch-chroot /mnt useradd -mU -p "$password" -s /usr/bin/zsh -G wheel,uucp,video,audio,storage,games,input "$user"
+arch-chroot /mnt useradd -mU -p ${password} -s /usr/bin/zsh -G wheel,uucp,video,audio,storage,games,input ${user}
 arch-chroot /mnt chsh -s /usr/bin/zsh
 
 echo "Give sudo to wheel"
@@ -356,8 +356,7 @@ arch-chroot -u "$user" /mnt git clone --remote-submodules --recurse-submodules h
 
 echo '======================================================================='
 echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-echo " All finished.  Don't forget to set the password for root and your"
-echo " personal account $user"
+echo " All finished.  Don't forget to set the password for root"
 echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
 echo '======================================================================='
 
