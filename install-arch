@@ -348,6 +348,7 @@ arch-chroot -u "$user" /mnt git clone --remote-submodules --recurse-submodules h
 
 
 # I'm not sure why this doesn't work. But it doesn't even when it appears to.
+# Worst case it results in a core dump or kernel smashing...
 # echo '======================================================================='
 # echo "Setting passwords for root and ${user}"
 
@@ -356,9 +357,11 @@ arch-chroot -u "$user" /mnt git clone --remote-submodules --recurse-submodules h
 
 echo '======================================================================='
 echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-echo " All finished.  Don't forget to set the password for root"
+echo " Set the Root password!"
 echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
 echo '======================================================================='
+
+arch-chroot /mnt passwd
 
 umount /mnt/boot
 umount /mnt
