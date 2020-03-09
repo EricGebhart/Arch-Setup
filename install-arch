@@ -348,8 +348,8 @@ arch-chroot -u "$user" /mnt git clone --remote-submodules --recurse-submodules h
 echo '======================================================================='
 echo "Setting passwords for root and ${user}"
 
-arch-chroot /mnt echo "$user:$password" > chpasswd --root /mnt
-arch-chroot /mnt echo "root:$password" > chpasswd --root /mnt
+echo "$user:$password" | chpasswd --root /mnt
+echo "root:$password" | chpasswd --root /mnt
 
 umount /mnt/boot
 umount /mnt
