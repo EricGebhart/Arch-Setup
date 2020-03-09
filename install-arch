@@ -311,6 +311,7 @@ echo "default is '"arch"' with acpi=off"
 arch-chroot /mnt bootctl install
 
 cat <<EOF > /mnt/boot/loader/loader.conf
+timeout 10
 default arch
 EOF
 
@@ -327,7 +328,7 @@ echo " "
 echo '======================================================================='
 echo "create ${user} in wheel with zsh."w
 # create user in wheel with zsh.
-arch-chroot /mnt useradd -mU -s /usr/bin/zsh -G wheel,uucp,video,audio,storage,games,input "$user"
+arch-chroot /mnt useradd -mU -p "$password" -s /usr/bin/zsh -G wheel,uucp,video,audio,storage,games,input "$user"
 arch-chroot /mnt chsh -s /usr/bin/zsh
 
 echo "Give sudo to wheel"
@@ -348,8 +349,8 @@ arch-chroot -u "$user" /mnt git clone --remote-submodules --recurse-submodules h
 echo '======================================================================='
 echo "Setting passwords for root and ${user}"
 
-echo $user:$password | chpasswd --root /mnt
-echo root:$password | chpasswd --root /mnt
+echo "${user}:${password}" | chpasswd --root /mnt
+echo "root:${password}" | chpasswd --root /mnt
 
 umount /mnt/boot
 umount /mnt
