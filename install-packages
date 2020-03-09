@@ -90,6 +90,10 @@ function install_hidpi {
     install_repo dotfiles hidpi
 }
 
+### Set up logging ###
+exec 1> >(tee "pkg-install.log")
+exec 2> >(tee "pkg-install.log")
+
 # create a menu.
 cmd=(dialog --stdout --separate-output --checklist "Select Packages to install" 22 77 16)
 options=(1 "Xmonad" on
