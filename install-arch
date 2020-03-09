@@ -321,7 +321,7 @@ initrd   /initramfs-linux.img
 options  root=PARTUUID=$(blkid -s PARTUUID -o value "$root_partition") rw acpi=off
 EOF
 
-bootctl list
+arch-chroot /mnt bootctl list
 
 echo " "
 echo '======================================================================='
