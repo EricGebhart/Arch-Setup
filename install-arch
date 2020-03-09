@@ -346,11 +346,20 @@ echo "cloning Arch-Setup repo into ${user} for setup after reboot"
 
 arch-chroot -u "$user" /mnt git clone --remote-submodules --recurse-submodules https://github.com/ericgebhart/Arch-Setup.git /home/$user/Arch-Setup
 
-echo '======================================================================='
-echo "Setting passwords for root and ${user}"
 
-echo "${user}:${password}" | chpasswd --root /mnt
-echo "root:${password}" | chpasswd --root /mnt
+# I'm not sure why this doesn't work. But it doesn't even when it appears to.
+# echo '======================================================================='
+# echo "Setting passwords for root and ${user}"
+
+# echo "${user}:${password}" | chpasswd --root /mnt
+# echo "root:${password}" | chpasswd --root /mnt
+
+echo '======================================================================='
+echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+echo " All finished.  Don't forget to set the password for root and your"
+echo " personal account $user"
+echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+echo '======================================================================='
 
 umount /mnt/boot
 umount /mnt
