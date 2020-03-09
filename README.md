@@ -2,19 +2,44 @@
 
 This repo consists of two scripts and some submodules.
 
- * Arch-installer  - a script to do the basic arch install steps.
- * package-installer - a script to install some meta packges and setup
- for various things.
+ * Arch-installer  - a script to do the basic arch install steps -- not recommended to newbies.
+ * package-installer - a script to install some meta packages and my setup repos
+ for various things. 
+
+## Getting started.
+
+ You will need an internet connection to get the installer after you've booted your 
+ Arch linux Live USB connect to the internet, 
+ I usually use `wifi-menu`.  Then do this curl command to fetch the installer script.
+ 
+ `curl https://raw.githubusercontent.com/EricGebhart/Arch-Setup/master/install-arch  > ./install-arch`
+ Change it to executable. `chmod a+x install-arch` 
+ 
+ Get help.  `install-arch -h`  Be careful.
+ 
+## After basic installation and reboot
+ 
+### Get a network. 
+ 
+ * start network manager 
+   * `sudo systemctl enable NetworkManager; systemctl start NetworkManager`
+ 
+ * get a connection
+   * `nmtui`
+   
+### install packages
+
+ * install packages
+   * `./install-packages
+ 
+You are on your own from here... 
+ 
+
  
 ## Arch-installer
 
  This is a basic arch installer. There isn't much to installing arch as it is,
  but after doing it a bunch of times it's nice to have something that automates things a bit.
- 
- To get it after you've booted your Arch linux Live USB connect to the internet, 
- I usually use `wifi-menu`.  Then do this curl command to fetch the installer script.
- 
- `curl https://raw.githubusercontent.com/EricGebhart/Arch-Setup/master/install-arch  > ./install-arch`
  
  If you haven't installed Arch Linux manually a few times, following the instructions 
  [in the instllation guide](https://wiki.archlinux.org/index.php/Installation_guide#Localization)
