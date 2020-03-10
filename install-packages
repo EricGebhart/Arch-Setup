@@ -31,16 +31,25 @@ function install_repo {
     cd -
 }
 
-function install_xmonad {
-    echo "Installing Xmonad and setup"
+function install_X11 {
     install_pkg X11
     install_pkg X11-apps
+    install_aur_Xapps
+}
+
+function install_xmonad {
+    echo "Installing Xmonad and setup"
+    install_X11
     install_pkg Xmonad
     install_repo xmonad-setup
     install_repo xmonad-setup xsession
     cd xmonad-log-applet; make && sudo make install; cd -
 }
 
+function install_aur_Xapps {
+    depends=(yacreader vivaldi vivaldi-codecs-ffmpeg-extra-bin)
+    yay -S $depends
+}
 
 function install_necessities {
     echo "Installing necessities"
@@ -49,6 +58,8 @@ function install_necessities {
 
     # install emacs and accomplices
     install_pkg emacs
+    # install mu.
+    yay -S mu-git
     # will attempt to copy mu4e site-lisp...
     install_repo emacs-setup all
 
@@ -59,8 +70,7 @@ function install_necessities {
 
 function install_xfce {
     echo "Installing Xfce4"
-    install_pkg X11
-    install_pkg X11-apps
+    install_X11
     install_pkg xfce
 }
 
