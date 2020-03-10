@@ -4,7 +4,7 @@ This repo consists of two scripts and some submodules.
 
  * Arch-installer  - a script to do the basic arch install steps -- not recommended to newbies.
  * package-installer - a script to install some meta packages and my setup repos
- for various things. 
+ for various things.  Xorg, Xmonad, emacs
 
 ## Getting started.
 
