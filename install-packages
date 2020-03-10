@@ -31,26 +31,36 @@ function install_repo {
     cd -
 }
 
+function install_pkgs {
+    for pkg
+    do
+        install_pkg $pkg
+    done
+}
+
+# comme ca.  install_repos foo "bar install" "baz clean" "baz install"
+function install_repos {
+    for repo
+    do
+        install_repo $repo
+    done
+}
+
 function install_X11 {
-    install_pkg X11
-    install_pkg X11-apps
-    install_aur_Xapps
+    echo "Installing Xorg and apps."
+    install_pkgs X11 X11-apps
+    yay -S yacreader vivaldi vivaldi-codecs-ffmpeg-extra-bin
 }
 
 function install_xmonad {
     echo "Installing Xmonad and setup"
     install_pkg Xmonad
-    install_repo xmonad-setup
-    install_repo xmonad-setup xsession
-    cd xmonad-log-applet; make && sudo make install; cd -
-}
-
-function install_aur_Xapps {
-    depends=(yacreader vivaldi vivaldi-codecs-ffmpeg-extra-bin)
-    yay -S $depends
+    install_repo xmonad-setup all
+    cd xmonad-log-applet; ./autogen.sh && make && sudo make install; cd -
 }
 
 function install_emacs {
+    echo "Installing emacs accomplices and setup"
     # install emacs and accomplices
     install_pkg emacs
     # install mu.
@@ -66,14 +76,14 @@ function install_necessities {
 }
 
 function install_dotfiles {
+    echo "Installing Dot files"
     # install dotfiles, etc.
-    install_repo dotfiles
-    install_repo bc-extensions
+    install_repos dotfiles bc-extensions
 }
 
 function install_xfce {
     echo "Installing Xfce4"
-    install_pkg xfce
+    install_pkg Xfce
 }
 
 function install_devel {
