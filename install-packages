@@ -39,7 +39,6 @@ function install_X11 {
 
 function install_xmonad {
     echo "Installing Xmonad and setup"
-    install_X11
     install_pkg Xmonad
     install_repo xmonad-setup
     install_repo xmonad-setup xsession
@@ -51,18 +50,19 @@ function install_aur_Xapps {
     yay -S $depends
 }
 
-function install_necessities {
-    echo "Installing necessities"
-    install_pkg necessities
-    install_pkg yay
-
+function install_emacs {
     # install emacs and accomplices
     install_pkg emacs
     # install mu.
     yay -S mu-git
     # will attempt to copy mu4e site-lisp...
     install_repo emacs-setup all
+}
 
+function install_necessities {
+    echo "Installing necessities"
+    install_pkg necessities
+    install_pkg yay
     # install dotfiles, etc.
     install_repo dotfiles
     install_repo bc-extensions
@@ -70,7 +70,6 @@ function install_necessities {
 
 function install_xfce {
     echo "Installing Xfce4"
-    install_X11
     install_pkg xfce
 }
 
@@ -106,54 +105,67 @@ exec 2> >(tee "pkg-install.log")
 
 # create a menu.
 cmd=(dialog --stdout --separate-output --checklist "Select Packages to install" 22 77 16)
-options=(1 "Xmonad" on
-         2 "Xfce"   off
-         3 "devel"  on
-         4 "tablet" on
-         5 "natural-language"   on
-         6 "mobile-studio-pro"  off
-         7 "High DPI screen"    on
-         8 "All"    off )
+         2 "X11"    on
+         options=(1 "X11"    on
+                  2 "Xmonad" on
+                  3 "dot files" on
+                  4 "Emacs setup"  on
+                  5 "Xfce"   off
+                  6 "clojure, python, etc."  on
+                  7 "Tablet - Pen stuff - krita, cellwriter, onboard..." on
+                  8 "Natural language - hunspell, languagetool, ..."   on
+                  9 "Mobile Studio Pro"  off
+                  10 "High DPI screen, Resolution 3840x2160"    on
+                  11 "All"    off )
 
-# display menu and get the choices
-choices=$("${cmd[@]}" "${options[@]}")
-# clear
+         # display menu and get the choices
+         choices=$("${cmd[@]}" "${options[@]}")
+         # clear
 
-# install necessties always. dotfiles, emacs setup, ~/bin/
-install_necessities
+         # install necessties always. dotfiles, emacs setup, ~/bin/
+         install_necessities
 
-for choice in ${choices[@]}
-do
-    case $choice in
-        1)
-            install_xmonad
-            ;;
-        2)
-            install_xfce
-            ;;
-        3)
-            install_devel
-            ;;
-        4)
-            install_tablet
-            ;;
-        5)
-            install_nat_language
-            ;;
-        6)
-            install_MBP
-            ;;
-        7)
-            install_hidpi
-            ;;
-        8)
-            echo "Installing All"
-            install_xmonad
-            install_xfce
-            install_devel
-            install_nat-language
-            install_MBP
-            install_hidpi
-            ;;
-    esac
-done
+         for choice in ${choices[@]}
+         do
+             case $choice in
+                 1)
+                     install_X11
+                     ;;
+                 2)
+                     install_xmonad
+                     ;;
+                 3)
+                     install_dotfiles
+                     ;;
+                 4)
+                     install_emacs
+                     ;;
+                 5)
+                     install_xfce
+                     ;;
+                 6)
+                     install_devel
+                     ;;
+                 7)
+                     install_tablet
+                     ;;
+                 8)
+                     install_nat_language
+                     ;;
+                 9)
+                     install_MBP
+                     ;;
+                 10)
+                     install_hidpi
+                     ;;
+                 11)
+                     echo "Installing All"
+                     install_xmonad
+                     install_xfce
+                     install_devel
+                     install_nat-language
+                     install_MBP
+                     install_hidpi
+                     ;;
+             esac
+         done
