@@ -63,6 +63,9 @@ function install_necessities {
     echo "Installing necessities"
     install_pkg necessities
     install_pkg yay
+}
+
+function install_dotfiles {
     # install dotfiles, etc.
     install_repo dotfiles
     install_repo bc-extensions
@@ -105,64 +108,70 @@ exec 2> >(tee "pkg-install.log")
 
 # create a menu.
 cmd=(dialog --stdout --separate-output --checklist "Select Packages to install" 22 77 16)
-         2 "X11"    on
-         options=(1 "X11"    on
-                  2 "Xmonad" on
-                  3 "dot files" on
-                  4 "Emacs setup"  on
-                  5 "Xfce"   off
-                  6 "clojure, python, etc."  on
-                  7 "Tablet - Pen stuff - krita, cellwriter, onboard..." on
-                  8 "Natural language - hunspell, languagetool, ..."   on
-                  9 "Mobile Studio Pro"  off
-                  10 "High DPI screen, Resolution 3840x2160"    on
-                  11 "All"    off )
+         options=(
+             1 "Necessities - utilities, yay, etc." on
+             2 "X11"    on
+             3 "Xmonad" on
+             4 "dot files" on
+             5 "Emacs setup"  on
+             6 "Xfce"   off
+             7 "clojure, python, etc."  on
+             8 "Tablet - Pen stuff - krita, cellwriter, onboard..." on
+             9 "Natural language - hunspell, languagetool, ..."   on
+             10 "Mobile Studio Pro"  off
+             11 "High DPI screen, Resolution 3840x2160"    on
+             12 "All"    off )
 
          # display menu and get the choices
          choices=$("${cmd[@]}" "${options[@]}")
          # clear
 
-         # install necessties always. dotfiles, emacs setup, ~/bin/
-         install_necessities
-
          for choice in ${choices[@]}
          do
              case $choice in
                  1)
-                     install_X11
+                     install_necessities
                      ;;
                  2)
-                     install_xmonad
+                     install_X11
                      ;;
                  3)
-                     install_dotfiles
+                     install_xmonad
                      ;;
                  4)
-                     install_emacs
+                     install_dotfiles
                      ;;
                  5)
-                     install_xfce
+                     install_emacs
                      ;;
                  6)
-                     install_devel
+                     install_xfce
                      ;;
                  7)
-                     install_tablet
+                     install_devel
                      ;;
                  8)
-                     install_nat_language
+                     install_tablet
                      ;;
                  9)
-                     install_MBP
+                     install_nat_language
                      ;;
                  10)
-                     install_hidpi
+                     install_MBP
                      ;;
                  11)
+                     install_hidpi
+                     ;;
+                 12)
                      echo "Installing All"
+                     install_necessities
+                     install_dotfiles
+                     install_emacs
+                     install_X11
                      install_xmonad
                      install_xfce
                      install_devel
+                     install_tablet
                      install_nat-language
                      install_MBP
                      install_hidpi
