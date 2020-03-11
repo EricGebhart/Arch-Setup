@@ -47,7 +47,7 @@ To install my repositories I use each of their _Makefiles_.  Usually `make insta
 So depending on which things are chosen to install, there is possibly a _pacman_ command, 
 a _yay_ command and one or more _make_ commands.
 
-## What is here.https://www.gnu.org/software/bc/manual/html_mono/bc.html
+## What is here.
 
 * 2 shell scripts
    * install-arch  - to install arch from a Live USB
