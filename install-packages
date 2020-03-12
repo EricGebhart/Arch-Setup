@@ -21,14 +21,63 @@
 # bc-extensions
 # xmonad-log-applet
 
+help(){
+    printf "presents a checklist of packages from the official Arch repo,\n"
+    printf "the AUR, and the packages in the arch-pkgs subdirectory.\n"
+    printf "Additionally installs configuration repositories.\n"
+    printf "\n "
+    printf "-n  No packages, don't install packages\n"
+    printf "-r  No repositories, don't install repositories\n"
+    printf "-h  This help text.\n"
+}
+
+# $opt will hold the current option
+opt=''
+while getopts d:s:e:r:Fl:hl:u:n:t:TPh opt; do
+    # loop continues till options finished
+    # see which pattern $opt matches...
+    case $opt in
+        (n)
+            no_packages=true
+            ;;
+        (r)
+            no_repos=true
+            ;;
+        (h)
+            help
+            ;;
+	# matches a question mark
+	# (and nothing else, see text)
+        (\?)
+            printf "Bad option:" # $*
+            printf " "
+            help
+            return 1
+            ;;
+    esac
+done
+
+(( OPTIND > 1 )) && shift $(( OPTIND - 1 ))
+
+
 function install_pkg {
-    cd arch-pkgs/$1; makepkg -si; cd -
+    if [[ -v ${no_packages} ]];then
+        cd arch-pkgs; make $1; cd -
+    fi
+}
+
+function install_aur_pkgs {
+    if [[ -v ${no_packages} ]];then
+        yay -S $@
+    fi
 }
 
 function install_repo {
-    cd $1
-    make ${2-install}
-    cd -
+    if [[ -v ${no_repos} ]];then
+        cd $1
+        make ${2-install}
+        cd -
+    fi
 }
 
 function install_pkgs {
@@ -49,7 +98,7 @@ function install_repos {
 function install_X11 {
     echo "Installing Xorg and apps."
     install_pkgs X11 X11-apps
-    yay -S yacreader vivaldi vivaldi-codecs-ffmpeg-extra-bin
+    install_aur_pkgs yacreader vivaldi vivaldi-codecs-ffmpeg-extra-bin
 }
 
 function install_xmonad {
@@ -64,7 +113,7 @@ function install_emacs {
     # install emacs and accomplices
     install_pkg emacs
     # install mu.
-    yay -S mu-git
+    install_aur_pkgs mu-git
     # will attempt to copy mu4e site-lisp...
     install_repo emacs-setup all
 }
