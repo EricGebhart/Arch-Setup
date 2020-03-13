@@ -1,50 +1,32 @@
 #!/bin/bash
 
-# meta packages
-#---------------
-# devel - clojure, leiningen, python, perl, etc.
-# emacs - emacs, hunspell, languagetool, mu4e, isync, silver-surfer
-# mobile-studio-pro  - nvidia, hi DPI settings.
-# natural-language - languagetool, hunspell dictionaries,...
-# necessities  - basic stuff everyone should have.
-# tablet - krita, gimp, cellwriter, easystroke, onboard, Xournal
-# X11 - xorg, xorg-apps, ...
-# X11-apps - libreoffice, vivaldi, etc.
-# Xfce - xfce4, xfce4-goodies, network-manager-applet.
-# Xmonad - xmonad, haskell, xfce4-panel, network-manager-applet.
-
-# setup repos.
-#----------------
-# emacs-setup
-# xmonad-setup
-# dotfiles
-# bc-extensions
-# xmonad-log-applet
-
 help(){
-    printf "presents a checklist of packages from the official Arch repo,\n"
+    printf "Presents a checklist of packages from the official Arch repo,\n"
     printf "the AUR, and the packages in the arch-pkgs subdirectory.\n"
     printf "Additionally installs configuration repositories.\n"
     printf "\n "
+    printf "The actual work is in the Makefile. It handles the dependencies\n"
+    printf "and knows how to install from the arch-pkgs repo (another make) or\n"
+    printf "the AUR or a regular repo with a Makefile.\n"
+    printf "The official repo is accessed by the meta-packages in arch-pkgs\n"
+    printf "The aur packages are installed directly by the Makefile. \n"
+    printf "Make calls make for each of the configuration repos as needed.\n"
+    printf "\n "
+    printf "In reality this is just a nice front end to the Makefile.\n"
+    printf "You may almost as easily install everthing as you wish from \n"
+    printf "the command line by using make. Doing that will give much more\n"
+    printf "granular control.\n"
     printf "Options: \n"
-    printf "  -n  No packages, don't install packages\n"
-    printf "  -r  No repositories, don't install repositories\n"
     printf "  -h  This help text.\n"
     exit
 }
 
 # $opt will hold the current option
 opt=''
-while getopts nrh opt; do
+while getopts h opt; do
     # loop continues till options finished
     # see which pattern $opt matches...
     case $opt in
-        (n)
-            no_packages=true
-            ;;
-        (r)
-            no_repos=true
-            ;;
         (h)
             help
             ;;
@@ -61,181 +43,76 @@ done
 
 (( OPTIND > 1 )) && shift $(( OPTIND - 1 ))
 
-
-function install_pkg {
-    if [[ -z ${no_packages} ]];then
-        cd arch-pkgs; make $1; cd -
-    fi
-}
-
-function install_aur_pkgs {
-    if [[ -z ${no_packages} ]];then
-        yay -S $@
-    fi
-}
-
-function install_repo {
-    if [[ -z ${no_repos} ]];then
-        cd $1
-        make ${2-install}
-        cd -
-    fi
-}
-
-function install_pkgs {
-    for pkg
-    do
-        install_pkg $pkg
-    done
-}
-
-# comme ca.  install_repos foo "bar install" "baz clean" "baz install"
-function install_repos {
-    for repo
-    do
-        install_repo $repo
-    done
-}
-
-function install_X11 {
-    echo "Installing Xorg and apps."
-    install_pkgs X11 X11-apps
-    install_aur_pkgs yacreader vivaldi vivaldi-codecs-ffmpeg-extra-bin
-}
-
-function install_xmonad {
-    echo "Installing Xmonad and setup"
-    install_pkg Xmonad
-    install_repo xmonad-setup all
-    cd xmonad-log-applet; ./autogen.sh && make && sudo make install; cd -
-}
-
-function install_emacs {
-    echo "Installing emacs accomplices and setup"
-    # install emacs and accomplices
-    install_pkg emacs
-    # install mu.
-    install_aur_pkgs mu-git
-    # will attempt to copy mu4e site-lisp...
-    install_repo emacs-setup all
-}
-
-function install_necessities {
-    echo "Installing necessities"
-    install_pkg necessities
-    install_pkg yay
-}
-
-function install_dotfiles {
-    echo "Installing Dot files"
-    # install dotfiles, etc.
-    install_repos dotfiles bc-extensions
-}
-
-function install_xfce {
-    echo "Installing Xfce4"
-    install_pkg Xfce
-}
-
-function install_devel {
-    echo "Installing dev tools"
-    install_pkg devel
-}
-
-function install_tablet {
-    echo "Installing dev tools"
-    install_pkg tablet
-}
-
-function install_nat_language {
-    echo "Installing Natural language stuff"
-    install_pkg natural-language
-}
-
-function install_MBP {
-    echo "Installing mobile studio pro, nvidia, hidpi.."
-    install_pkg mobile-studio-pro
-    install_repo dotfiles hidpi
-}
-
-function install_hidpi {
-    echo "adding high DPI settings to .Xresources."
-    install_repo dotfiles hidpi
-}
-
 ### Set up logging ###
 exec 1> >(tee "pkg-install.log")
 exec 2> >(tee "pkg-install.log")
 
 # create a menu.
 cmd=(dialog --stdout --separate-output --checklist "Select Packages to install" 22 77 16)
-         options=(
-             1 "Necessities - utilities, yay, etc." on
-             2 "X11"    on
-             3 "Xmonad" on
-             4 "dot files" on
-             5 "Emacs setup"  on
-             6 "Xfce"   off
-             7 "clojure, python, etc."  on
-             8 "Tablet - Pen stuff - krita, cellwriter, onboard..." on
-             9 "Natural language - hunspell, languagetool, ..."   on
-             10 "Mobile Studio Pro"  off
-             11 "High DPI screen, Resolution 3840x2160"    on
-             12 "All"    off )
+options=(
+    1 "Necessities - utilities, yay, etc." on
+    2 "X11 - xorg, libreOffice, vivaldi, etc."    on
+    3 "Xmonad - Haskell, xfce4-panel, etc." on
+    4 "dot files - (.zsh, .Xresources, .icons, etc" on
+    5 "Emacs, accomplices (isync, mu4e,...) and configuration"  on
+    6 "Xfce"   off
+    7 "clojure, python, etc."  on
+    8 "Tablet - Pen stuff - krita, cellwriter, onboard..." on
+    9 "Natural language - hunspell, languagetool, ..."   on
+    10 "Mobile Studio Pro - Nvidia, hidpi"  off
+    11 "High DPI screen, .Xresources mods, Resolution 3840x2160"    on
+    12 "Xmonad Xsession (requires sudo)"    off
+    13 "All"    off )
 
-         # display menu and get the choices
-         choices=$("${cmd[@]}" "${options[@]}")
-         # clear
+# display menu and get the choices
+choices=$("${cmd[@]}" "${options[@]}")
+# clear
 
-         for choice in ${choices[@]}
-         do
-             case $choice in
-                 1)
-                     install_necessities
-                     ;;
-                 2)
-                     install_X11
-                     ;;
-                 3)
-                     install_xmonad
-                     ;;
-                 4)
-                     install_dotfiles
-                     ;;
-                 5)
-                     install_emacs
-                     ;;
-                 6)
-                     install_xfce
-                     ;;
-                 7)
-                     install_devel
-                     ;;
-                 8)
-                     install_tablet
-                     ;;
-                 9)
-                     install_nat_language
-                     ;;
-                 10)
-                     install_MBP
-                     ;;
-                 11)
-                     install_hidpi
-                     ;;
-                 12)
-                     echo "Installing All"
-                     install_necessities
-                     install_dotfiles
-                     install_emacs
-                     install_X11
-                     install_xmonad
-                     install_xfce
-                     install_devel
-                     install_tablet
-                     install_nat-language
-                     install_MBP
-                     install_hidpi
-                     ;;
-             esac
-         done
+# make sure yay is installed.
+[[ ! -f /usr/bin/yay ]] && make yay
+
+for choice in ${choices[@]}
+do
+    case $choice in
+        1)
+            make necessities
+            ;;
+        2)
+            make X11
+            ;;
+        3)
+            make Xmonad
+            ;;
+        4)
+            make dotfiles
+            ;;
+        5)
+            make emacs
+            ;;
+        6)
+            make Xfce
+            ;;
+        7)
+            make devel
+            ;;
+        8)
+            make tablet
+            ;;
+        9)
+            make natural-language
+            ;;
+        10)
+            make mobile-studio-pro
+            ;;
+        11)
+            make hidpi
+            ;;
+        12)
+            make xsession
+            ;;
+        13)
+            echo "Installing All"
+            make all
+            ;;
+    esac
+done
