@@ -26,14 +26,16 @@ help(){
     printf "the AUR, and the packages in the arch-pkgs subdirectory.\n"
     printf "Additionally installs configuration repositories.\n"
     printf "\n "
-    printf "-n  No packages, don't install packages\n"
-    printf "-r  No repositories, don't install repositories\n"
-    printf "-h  This help text.\n"
+    printf "Options: \n"
+    printf "  -n  No packages, don't install packages\n"
+    printf "  -r  No repositories, don't install repositories\n"
+    printf "  -h  This help text.\n"
+    exit
 }
 
 # $opt will hold the current option
 opt=''
-while getopts d:s:e:r:Fl:hl:u:n:t:TPh opt; do
+while getopts nrh opt; do
     # loop continues till options finished
     # see which pattern $opt matches...
     case $opt in
@@ -61,19 +63,19 @@ done
 
 
 function install_pkg {
-    if [[ -v ${no_packages} ]];then
+    if [[ -z ${no_packages} ]];then
         cd arch-pkgs; make $1; cd -
     fi
 }
 
 function install_aur_pkgs {
-    if [[ -v ${no_packages} ]];then
+    if [[ -z ${no_packages} ]];then
         yay -S $@
     fi
 }
 
 function install_repo {
-    if [[ -v ${no_repos} ]];then
+    if [[ -z ${no_repos} ]];then
         cd $1
         make ${2-install}
         cd -
