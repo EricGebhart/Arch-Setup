@@ -157,18 +157,18 @@ devicelist=(`lsblk -nx size -o name,size`)
 echo "devicelist is:" $devicelist
 
 # Not partitioning, and no drive partitions specified for installation
-if [ -z $efi_partition  &&  -z $partition_devices ];then
+if [[ -z $efi_partition  &&  -z $partition_devices ]];then
     efi_partition=$(dialog --stdout --menu "Select  efi-device" 0 0 0 "${devicelist[@]}") || exit 1
     clear
 fi
 
-if [ -z $root_partition  &&  -z $partition_devices ];then
+if [[ -z $root_partition  &&  -z $partition_devices ]];then
     root_partition=$(dialog --stdout --menu "Select  root-device" 0 0 0 "${devicelist[@]}") || exit 1
     clear
 fi
 
 # if partitioning is on, but disk is not set.
-if [ -z $disk  &&  $partition_devices = true ];then
+if [[ -z $disk  &&  $partition_devices = true ]];then
     # if partitioning is on, but disk is not set.
     devicelist=(`lsblk -dplnx size -o name,size | grep -Ev "boot|rpmb|loop" | tac`)
     echo "devicelist is:" $devicelist
