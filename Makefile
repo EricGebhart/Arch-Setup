@@ -50,6 +50,6 @@ git-sub-update:
 	for repo in $repos; do \
 		git submodule add --force $$repos; \
 	done; \
-	git submodule add --force $(arch-pkgs); \
+	git submodule add --force arch-pkgs; \
 	git commit -am "update submodules to head"; \
 	git push
