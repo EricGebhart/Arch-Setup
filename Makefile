@@ -1,4 +1,4 @@
-packages := $(shell cd arch-pkgs; ls -d */ | sed ',/,,')
+packages := $(shell cd arch-pkgs; ls -d */ | sed 's,/,,')
 aur-packages := yacreader vivaldi vivaldi-codecs-fmpeg-extra-bin mu-git
 repos := xmonad-setup emacs-setup dotfiles bc-extensions
 
@@ -8,8 +8,12 @@ print-%  : ; @echo $* = $($*)
 
 .PHONY: $(packages) $(aur-packages) $(repos) hidpi xmonad-xsession xmonad-log-applet
 
+clean:
+	cd arch-pkgs; make clean; \
+        cd xmonad-log-applet; make clean
+
 $(packages):
-	cd arch-pkgs/$@; makepkg -si
+	cd arch-pkgs; make $@
 
 $(aur-packages):
 	yay -S $@
