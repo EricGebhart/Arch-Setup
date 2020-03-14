@@ -47,9 +47,9 @@ base: X11 X11-apps necessities emacs dotfiles Xmonad yay
 account: dotfiles emacs Xmonad
 
 git-sub-update:
-	for repo in $repos; do \
-		git submodule add --force ./$$repo; \
+	for repo in $(repos); do \
+		git submodule add --force "./$$repo"; \
 	done; \
 	git submodule add --force ./arch-pkgs; \
-	git commit -am "update submodules to head"; \
-	git push
+	# git commit -am "update submodules to head"; \
+	# git push
