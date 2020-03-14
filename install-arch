@@ -365,12 +365,17 @@ arch-chroot -u "$user" /mnt passwd
 echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
 echo '======================================================================='
 
+arch-chroot -u $user echo "# no menu" > .zshrc;
+arch-chroot -u $user echo "cd Arch-Setup; ./install-packages" > .zlogin
+
+
 umount /mnt/boot
 umount /mnt
 
 echo " "
 echo '======================================================================='
-echo Ready to reboot. Look for the '"Arch-Setup"' folder in /home/${user} to finish installing stuff.
+echo "Ready to reboot. install-packages in the 'Arch-Setup' folder in /home/${user}"
+echo "will run when $user logs in to finish installing stuff."
 echo Croisez tes doigts.
 echo '======================================================================='
 echo " "
