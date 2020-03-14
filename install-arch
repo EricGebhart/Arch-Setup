@@ -351,6 +351,11 @@ arch-chroot -u "$user" /mnt git clone --remote-submodules --recurse-submodules h
 # echo "${user}:${password}" | chpasswd --root /mnt
 # echo "root:${password}" | chpasswd --root /mnt
 
+# get ready to reboot.
+arch-chroot /mnt systemctl enable NetworkManager
+echo arch-chroot -u $user /mnt echo "#nomenu" > .zshrc
+echo arch-chroot -u $user /mnt echo "cd Arch-Setup; nmtui; ./install-packages" > .zlogin
+
 echo '======================================================================='
 echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
 echo " Set the Root password!"
@@ -365,17 +370,13 @@ arch-chroot -u "$user" /mnt passwd
 echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
 echo '======================================================================='
 
-arch-chroot -u $user echo "# no menu" > .zshrc;
-arch-chroot -u $user echo "cd Arch-Setup; ./install-packages" > .zlogin
-
-
 umount /mnt/boot
 umount /mnt
 
 echo " "
 echo '======================================================================='
-echo "Ready to reboot. install-packages in the 'Arch-Setup' folder in /home/${user}"
-echo "will run when $user logs in to finish installing stuff."
+echo Ready to reboot. _install-packages_ will run on login. (.zlogin).
+echo Look in '"Arch-Setup"' folder in /home/${user} for details.
 echo Croisez tes doigts.
 echo '======================================================================='
 echo " "

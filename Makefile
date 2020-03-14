@@ -40,6 +40,7 @@ mobile-studio-pro: hidpi
 tablet:
 
 base: X11 X11-apps necessities emacs dotfiles Xmonad yay
+account: dotfiles emacs Xmonad
 
 git-sub-update:
 	git submodule add --force $(repos) $(arch-pkgs)

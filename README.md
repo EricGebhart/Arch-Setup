@@ -3,8 +3,8 @@
 This repo consists of two scripts and some submodules.
 
  * Arch-installer  - a script to do the basic arch install steps -- not recommended to newbies.
- * package-installer - a script to install some meta packages and my setup repos
- for various things.  Xorg, Xmonad, emacs
+ * package-installer - a script frontend to the Makefile which will install some meta packages 
+ and my setup repos for various things.  Xorg, Xmonad, emacs, dotfiles, apps, etc.
  
 ## Explanation
 
@@ -37,21 +37,24 @@ explicitly or you can just install them separately in your script.  I chose the 
 So, this is set of scripts is simple and obvious. I don't build any packages. 
 All I have are lightweight MetaPackages.  None of them do anything but have dependencies.
 There is nothing to build or deploy. Just check out this repo and run one script or another.
+You can use the Makefile directly to install the various parts instead of using the install-packages script which is just a checklist dialog that calls make.
 
 Depending on what you decide to install, dependencies like xorg are handled in one obvious
-and clear place. The install script. The same goes for the AUR.  The install script uses 
-`pacman -S` or `yay -S` accordingly. For my meta-packages it does a `makepkg -si`. 
-Super simple, no moving parts, and complexities are in the systems where they belong, not here.
+and clear place. The Makefile. The same goes for the AUR.  The Makefile in _arch-pkgs_ uses 
+`makepkg -si` to install it's meta-packages.  The Makefile here uses `yay -S` for packages in 
+the AUR. Super simple, no moving parts, and complexities are in the systems where they belong, not here.  The Makefile is super simple and makes it very easy to install groups of the three types
+of things.  Meta-packages, AUR packages and repositories with make.
 
-To install my repositories I use each of their _Makefiles_.  Usually `make install`.
-So depending on which things are chosen to install, there is possibly a _pacman_ command, 
-a _yay_ command and one or more _make_ commands.
+Essentially `make something` will install something or a group of somethings. Look at the
+Makefile if you are curious.
+
 
 ## What is here.
 
-* 2 shell scripts
+* 2 shell scripts, Makefiles everywhere.
    * install-arch  - to install arch from a Live USB
-   * install-packages  -  install packages from the offical repos or the AUR, or from local PKGbilds.  As well as some of my repositories.
+   * install-packages  -  Dialog checklist frontend to the Makefil. Install packages 
+   from the offical repos or the AUR, from local PKGBUILDs as well as some of my repositories.
 * arch-pkgs - My Arch Linux meta package repo
 * dotfiles -  My dotfiles and scripts repo
 * bc-extensions - My [bc](https://www.gnu.org/software/bc/manual/html_mono/bc.html) extensions repo

@@ -62,7 +62,8 @@ options=(
     10 "Mobile Studio Pro - Nvidia, hidpi"  off
     11 "High DPI screen, .Xresources mods, Resolution 3840x2160"    on
     12 "Xmonad Xsession (requires sudo)"    off
-    13 "All"    off )
+    13 "Account setup - dotfiles, emacs, Xmonad" off
+    14 "All"    off )
 
 # display menu and get the choices
 choices=$("${cmd[@]}" "${options[@]}")
@@ -110,8 +111,10 @@ do
         12)
             make xsession
             ;;
-        13)
-            echo "Installing All"
+        12)
+            make account
+            ;;
+        14)
             make all
             ;;
     esac
