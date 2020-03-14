@@ -16,7 +16,7 @@ $(packages):
 	cd arch-pkgs; make $@
 
 $(aur-packages):
-	yay -S $@
+	yay -S --noconfirm $@
 
 $(repos):
 	cd $@; make install
