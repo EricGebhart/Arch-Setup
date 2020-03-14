@@ -353,8 +353,8 @@ arch-chroot -u "$user" /mnt git clone --remote-submodules --recurse-submodules h
 
 # get ready to reboot.
 arch-chroot /mnt systemctl enable NetworkManager
-echo arch-chroot -u $user /mnt echo "#nomenu" > .zshrc
-echo arch-chroot -u $user /mnt echo "cd Arch-Setup; nmtui; ./install-packages" > .zlogin
+arch-chroot -u $user /mnt echo "#nomenu" > .zshrc
+arch-chroot -u $user /mnt echo "cd Arch-Setup; nmtui; ./install-packages" > .zlogin
 
 echo '======================================================================='
 echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
@@ -366,7 +366,8 @@ echo " "
 echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
 echo " Set the password for $user!"
 echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-arch-chroot -u "$user" /mnt passwd
+arch-chroot /mnt passwd -u $user
+echo " "
 echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
 echo '======================================================================='
 
