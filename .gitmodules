@@ -1,6 +1,6 @@
 [submodule "arch-pkgs"]
 	path = arch-pkgs
-	url = http://github.com/ericgebhart/arch-pkgs
+	url = ./arch-pkgs
 [submodule "emacs-setup"]
 	path = emacs-setup
 	url = http://github.com/ericgebhart/emacs-setup
