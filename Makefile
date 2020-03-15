@@ -1,5 +1,5 @@
 packages := $(shell cd arch-pkgs; ls -d */ | sed 's,/,,')
-aur-packages := yacreader vivaldi vivaldi-codecs-fmpeg-extra-bin mu-git
+aur-packages := yacreader vivaldi vivaldi-codecs-ffmpeg-extra-bin mu-git
 repos := xmonad-setup emacs-setup dotfiles bc-extensions
 
 all: $(packages) $(aur-packages) $(repos) hidpi xmonad-xsession
@@ -36,7 +36,7 @@ dotfiles: dotfiles bc-extensions
 emacs: emacs-setup mu-git
 yay:
 X11: X11-apps
-X11-apps: yacreader vivaldi vivaldi-codecs-fmpeg-extra-bin
+X11-apps: yacreader vivaldi vivaldi-codecs-ffmpeg-extra-bin
 Xfce:
 xmonad-setup: Xmonad xmonad-log-applet
 Xmonad:
