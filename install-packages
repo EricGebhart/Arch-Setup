@@ -82,7 +82,7 @@ do
             make X11
             ;;
         3)
-            make Xmonad
+            make xmonad-setup
             ;;
         4)
             make dotfiles

@@ -4,6 +4,7 @@ repos := xmonad-setup emacs-setup dotfiles bc-extensions
 
 all: $(packages) $(aur-packages) $(repos) hidpi xmonad-xsession
 
+# make print-packages, etc.
 print-%  : ; @echo $* = $($*)
 
 .PHONY: $(packages) $(aur-packages) $(repos) hidpi xmonad-xsession xmonad-log-applet
@@ -27,7 +28,7 @@ hidpi:
 xmonad-xsession:
 	cd xmonad-setup; make xsession
 
-xmonad-log-applet:
+xmonad-log-applet: Xmonad
 	cd xmonad-log-applet; ./autogen.sh && make && sudo make install
 
 necessities: necessities yay
@@ -37,7 +38,8 @@ yay:
 X11: X11-apps
 X11-apps: yacreader vivaldi vivaldi-codecs-fmpeg-extra-bin
 Xfce:
-Xmonad: xmonad-log-applet xmonad-setup
+xmonad-setup: Xmonad xmonad-log-applet
+Xmonad:
 devel:
 natural-language:
 mobile-studio-pro: hidpi
