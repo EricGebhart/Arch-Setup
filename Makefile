@@ -36,8 +36,8 @@ emacs-setup: emacs
 xmonad-setup: Xmonad xmonad-log-applet
 mobile-studio-pro: hidpi
 
-base: necessities X11 emacs dotfiles Xmonad
-account: dotfiles emacs Xmonad
+base: necessities X11 emacs-setup dotfiles xmonad-setup
+account: dotfiles emacs-setup xmonad-setup
 
 git-sub-update:
 	git submodule update --recursive --remote
