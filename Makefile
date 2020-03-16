@@ -1,13 +1,14 @@
 packages := $(shell cd arch-pkgs; ls -d */ | sed 's,/,,')
 aur-packages := yacreader vivaldi vivaldi-codecs-ffmpeg-extra-bin mu-git
 repos := xmonad-setup emacs-setup dotfiles bc-extensions
+everything := $(packages) $(aur-packages) $(repos) hidpi xmonad-xsession xmonad-log-applet
 
-all: $(packages) $(aur-packages) $(repos) hidpi xmonad-xsession
+all: $(everything)
 
 # make print-packages, etc.
 print-%  : ; @echo $* = $($*)
 
-.PHONY: $(packages) $(aur-packages) $(repos) hidpi xmonad-xsession xmonad-log-applet
+.PHONY: $(everything)
 
 clean:
 	cd arch-pkgs; make clean; \
@@ -31,10 +32,10 @@ xmonad-xsession:
 xmonad-log-applet: Xmonad
 	cd xmonad-log-applet; ./autogen.sh && make && sudo make install
 
-necessities: necessities yay
-dotfiles: dotfiles bc-extensions
-emacs: emacs-setup mu-git
+necessities: yay
 yay:
+dotfiles: dotfiles bc-extensions
+emacs-setup: necessities emacs natural-language mu-git
 X11: X11-apps
 X11-apps: yacreader vivaldi vivaldi-codecs-ffmpeg-extra-bin
 Xfce:

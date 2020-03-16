@@ -51,6 +51,77 @@ Makefile if you are curious.
 
 ## What is here.
 
+├── README.md
+├── Makefile
+├── install-arch
+├── install-packages
+├── arch-pkgs
+│   ├── README.md
+│   ├── Makefile
+│   ├── audio
+│   ├── devel
+│   ├── mobile-studio-pro
+│   ├── natural-language
+│   ├── necessities
+│   ├── tablet
+│   ├── X11
+│   ├── X11-apps
+│   ├── Xfce
+│   ├── Xmonad
+│   └── yay
+├── bc-extensions
+│   ├── README.md
+│   ├── Makefile
+│   ├── array.bc
+│   ├── extensions.bc
+│   ├── misc.bc
+│   ├── primes.bc
+│   └── rand.bc
+├── dotfiles
+│   ├── README.md
+│   ├── Makefile
+│   ├── hidpi.txt
+│   ├── bin
+│   │   ├── bcl
+│   │   ├── cellwriter@point
+│   │   ├── emacsn
+│   │   ├── flash-ergodox
+│   │   ├── new-re-frame-proj
+│   │   ├── serve-jekyll
+│   │   └── switch-kbd
+│   └── xcursor.theme
+├── emacs-setup
+│   ├── README.md
+│   ├── Makefile
+│   ├── elisp
+│   │   ├── bytecompiledir.el
+│   │   ├── config
+│   │   │   ├── Configuration files for everything.
+│   │   ├── extensions
+│   │   │   ├── Lisp extensions that have no package.
+│   │   ├── packages.el
+│   │   ├── setup.el
+│   │   ├── themes
+│   │   │   ├── Oh so many themes.
+│   │   └── vars.el
+│   ├── fonts
+│   ├── lein-profiles-example.clj
+│   └── mbsyncrc
+├── xmonad-log-applet
+│   ├── README.md
+│   ├── AUTHORS.md
+│   ├── autogen.sh
+│   ├── configure.ac
+│   └── ....
+└── xmonad-setup
+    ├── README.md
+    ├── Makefile
+    ├── ocean_park_114.jpg
+    ├── xmonad.desktop
+    └── xmonad.start
+
+32 directories, 364 files
+
 * 2 shell scripts, Makefiles everywhere.
    * install-arch  - to install arch from a Live USB
    * install-packages  -  Dialog checklist frontend to the Makefil. Install packages 
