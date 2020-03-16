@@ -271,6 +271,10 @@ Really, doing it all manually is not rocket science unless you are a newbie.
  allows communication between XMonad and the panel which comes with xfce4, gnome, kde and mate.
  
 
+## See Also:
 
+[Arch Linux; Creating an automated install and personal Setup](http://ericgebhart.com/blog/code/2020-03-15-Arch-Linux/)
  
- 
+* [hosting an arch linux repository in an amazon s3 bucket]: https://disconnected.systems/blog/archlinux-repo-in-aws-bucket
+* [managing arch linux with meta packages]: https://disconnected.systems/blog/archlinux-meta-packages
+* [creating a custom arch linux installer]: https://disconnected.systems/blog/archlinux-installer
