@@ -10,23 +10,26 @@ print-%  : ; @echo $* = $($*)
 .PHONY: $(everything)
 
 clean:
-	cd arch-pkgs; make clean; \
-        cd xmonad-log-applet; make clean
+	$(MAKE) -C arch-pkgs clean
+	$(MAKE) -C xmonad-log-applet clean
 
 $(packages):
-	cd arch-pkgs; make $@
+	$(MAKE) -C arch-pkgs $@
 
 $(repos):
-	cd $@; make install
+	$(MAKE) -C $@ install
 
 hidpi:
-	cd dotfiles; make hidpi
+	$(MAKE) -C dotfiles hidpi
 
 xmonad-xsession:
-	cd xmonad-setup; make xsession
+	$(MAKE) -C xmonad-setup xsession
 
+# the default is to build for xfce.
 xmonad-log-applet: Xmonad
-	cd xmonad-log-applet; ./autogen.sh && make && sudo make install
+	cd $@; ./autogen.sh
+	$(MAKE) -C $@
+	$(MAKE) -C $@ install
 
 dotfiles: dotfiles bc-extensions
 emacs-setup: emacs
