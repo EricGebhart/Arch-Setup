@@ -16,6 +16,10 @@ help(){
     printf "You may almost as easily install everthing as you wish from \n"
     printf "the command line by using make. Doing that will give much more\n"
     printf "granular control.\n"
+    printf "\n "
+    printf "Some options require sudo. Just rerun this and choose only them,\n"
+    printf "Or run them directly with sudo make.\n"
+    printf "\n "
     printf "Options: \n"
     printf "  -h  This help text.\n"
     exit
@@ -63,6 +67,8 @@ options=(
     11 "High DPI screen, .Xresources mods, Resolution 3840x2160"    on
     12 "Xmonad Xsession (requires sudo)"    off
     13 "Account setup - dotfiles, emacs, Xmonad" off
+    14 "Anbox - run android in a container" off
+    15 "Enable Anbox - configure and enable the anbox daemons (requires sudo)" off
     14 "All"    off )
 
 # display menu and get the choices
@@ -111,10 +117,16 @@ do
         12)
             make xsession
             ;;
-        12)
+        13)
             make account
             ;;
-        14)
+        13)
+            make anbox
+            ;;
+        13)
+            make enable-anbox
+            ;;
+        16)
             make all
             ;;
     esac
