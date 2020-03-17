@@ -1,18 +1,30 @@
 [submodule "arch-pkgs"]
 	path = arch-pkgs
 	url = http://github.com/ericgebhart/arch-pkgs
+	branch = master
+	update = rebase
 [submodule "emacs-setup"]
 	path = emacs-setup
 	url = http://github.com/ericgebhart/emacs-setup
+	branch = master
+	update = rebase
 [submodule "xmonad-setup"]
 	path = xmonad-setup
 	url = http://github.com/ericgebhart/xmonad-setup
+	branch = master
 [submodule "xmonad-log-applet"]
 	path = xmonad-log-applet
 	url = http://github.com/ericgebhart/xmonad-log-applet
+	branch = master
+	update = rebase
 [submodule "bc-extensions"]
 	path = bc-extensions
 	url = http://github.com/ericgebhart/bc-extensions
+	branch = master
 [submodule "dotfiles"]
 	path = dotfiles
 	url = http://github.com/ericgebhart/dotfiles
+	branch = master
+	update = rebase
+[submodule "rch-pkgs"]
+	update = rebase
