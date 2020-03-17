@@ -39,7 +39,6 @@ dotfiles: dotfiles bc-extensions
 emacs-setup: emacs
 xmonad-setup: Xmonad xmonad-log-applet
 mobile-studio-pro: hidpi
-anbox:
 
 base: necessities X11 emacs-setup dotfiles xmonad-setup
 account: dotfiles emacs-setup xmonad-setup

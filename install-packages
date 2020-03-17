@@ -60,7 +60,7 @@ options=(
     4 "dot files - (.zsh, .Xresources, .icons, etc" on
     5 "Emacs, accomplices (isync, mu4e,...) and configuration"  on
     6 "Xfce"   off
-    7 "clojure, python, etc."  on
+    7 "development - clojure, python, ruby, racket, guile, etc."  on
     8 "Tablet - Pen stuff - krita, cellwriter, onboard..." on
     9 "Natural language - hunspell, languagetool, ..."   on
     10 "Mobile Studio Pro - Nvidia, hidpi"  off
@@ -74,9 +74,6 @@ options=(
 # display menu and get the choices
 choices=$("${cmd[@]}" "${options[@]}")
 # clear
-
-# make sure yay is installed.
-[[ ! -f /usr/bin/yay ]] && make yay
 
 for choice in ${choices[@]}
 do
@@ -115,16 +112,16 @@ do
             make hidpi
             ;;
         12)
-            make xsession
+            make -C xmonad-setup xsession
             ;;
         13)
             make account
             ;;
-        13)
+        14)
             make anbox
             ;;
-        13)
-            make enable-anbox
+        15)
+            make -C dotfiles enable-anbox
             ;;
         16)
             make all
