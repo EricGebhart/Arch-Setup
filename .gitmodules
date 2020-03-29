@@ -28,3 +28,7 @@
 	update = rebase
 [submodule "rch-pkgs"]
 	update = rebase
+[submodule "onboard-keyboards"]
+	path = onboard-keyboards
+	url = https://github.com/ericgebhart/onboard-keyboards.git
+	branch = master

@@ -1,5 +1,6 @@
 packages := $(shell cd arch-pkgs; ls -d */ | sed 's,/,,')
-repos := xmonad-setup emacs-setup dotfiles bc-extensions
+repos := xmonad-setup emacs-setup dotfiles\
+ bc-extensions onboard-keyboards
 everything := $(packages) $(repos) hidpi xmonad-xsession xmonad-log-applet
 
 all: $(everything)
@@ -35,8 +36,8 @@ xmonad-log-applet: Xmonad
 	$(MAKE) -C $@
 	$(MAKE) -C $@ install
 
-dotfiles: dotfiles bc-extensions
-emacs-setup: emacs
+dotfiles: dotfiles bc-extensions onboard-keyboards
+emacs-setup: emacs-pkg-setup
 xmonad-setup: Xmonad xmonad-log-applet
 mobile-studio-pro: hidpi
 
