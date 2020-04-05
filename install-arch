@@ -357,7 +357,8 @@ arch-chroot -u "$user" /mnt git clone --remote-submodules --recurse-submodules h
 arch-chroot /mnt systemctl enable NetworkManager
 echo "#nomenu" > /mnt/home/$user/.zshrc
 echo "cd Arch-Setup; nmtui; ./install-packages" > /mnt/home/$user/.zlogin
-arch-chroot /mnt chown eric:eric /home/$user/.z*
+arch-chroot /mnt chown eric:eric /home/$user/.zshrc
+arch-chroot /mnt chown eric:eric /home/$user/.zlogin
 
 
 echo '======================================================================='
