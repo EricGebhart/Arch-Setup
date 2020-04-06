@@ -35,3 +35,6 @@
 [submodule "onboard-layouts"]
 	path = onboard-layouts
 	url = https://github.com/ericgebhart/onboard-layouts.git
+[submodule "xmonad-log-plasmoid"]
+	path = xmonad-log-plasmoid
+	url = https://github.com/ericgebhart/xmonad-log-plasmoid
