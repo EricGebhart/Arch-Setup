@@ -38,3 +38,6 @@
 [submodule "xmonad-log-plasmoid"]
 	path = xmonad-log-plasmoid
 	url = https://github.com/ericgebhart/xmonad-log-plasmoid
+[submodule "qmk-setup"]
+	path = qmk-setup
+	url = http://github.com/ericgebhart/qmk-setup.git
