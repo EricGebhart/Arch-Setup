@@ -1,6 +1,6 @@
 packages := $(shell cd arch-pkgs; ls -d */ | sed 's,/,,')
 repos := xmonad-setup emacs-setup dotfiles\
- bc-extensions onboard-keyboards
+ bc-extensions onboard-layouts games-setup
 everything := $(packages) $(repos) hidpi xmonad-xsession xmonad-log-applet
 
 all: $(everything)
@@ -26,7 +26,6 @@ hidpi:
 enable-anbox:
 	$(MAKE) -C dotfiles $@
 
-
 xmonad-xsession:
 	$(MAKE) -C xmonad-setup xsession
 
@@ -36,7 +35,7 @@ xmonad-log-applet: Xmonad
 	$(MAKE) -C $@
 	$(MAKE) -C $@ install
 
-dotfiles: dotfiles bc-extensions onboard-keyboards
+dotfiles: bc-extensions onboard-layouts
 emacs-setup: emacs-pkg-setup
 xmonad-setup: Xmonad xmonad-log-applet
 mobile-studio-pro: hidpi
