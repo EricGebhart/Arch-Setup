@@ -15,7 +15,8 @@ root_partition=''
 swap_partition=''
 locale='en_US.utf8'
 locale='en_US.utf8'
-timezone='Europe/Paris'
+## timezone='Europe/Paris'
+timezone='America/New York'
 user='eric'
 hostname='Archbox'
 partition_devices=false
@@ -204,39 +205,40 @@ timedatectl set-ntp true
 # partition the device/drive into efi, swap and root.
 if [[ ( -v $device  && $partition_devices = true ) ]];then
     ### Setup the disk and partitions ###
-    swap_size=$(free --mebi | awk '/Mem:/ {printf $2}')
-    swap_end=$(( $swap_size + 129 + 1 ))MiB
+    # swap_size=$(free --mebi | awk '/Mem:/ {printf $2}')
+    # swap_end=$(( $swap_size + 129 + 1 ))MiB
 
     parted --script "${device}" -- mklabel gpt \
            mkpart ESP fat32 1Mib 129MiB \
            set 1 boot on \
-           mkpart primary linux-swap 129MiB ${swap_end} \
-           mkpart primary ext4 ${swap_end} 100%
+           #       mkpart primary linux-swap 129MiB ${swap_end} \
+           # mkpart primary ext4 ${swap_end} 100%
+           mkpart primary ext4 129MiB 100%
 
     # Simple globbing was not enough as on one device I needed to match /dev/mmcblk0p1
     # but not /dev/mmcblk0boot1 while being able to match /dev/sda1 on other devices.
     efi_partition="$(ls ${device}* | grep -E "^${device}p?1$")"
-    swap_partition="$(ls ${device}* | grep -E "^${device}p?2$")"
+    # swap_partition="$(ls ${device}* | grep -E "^${device}p?2$")"
     root_partition="$(ls ${device}* | grep -E "^${device}p?3$")"
 
     echo EFI boot is $efi_partition
-    echo swap is $swap_partition
+    # echo swap is $swap_partition
     echo root is $root_partition
 fi
 
 # if we are supposed to partition or format. format, mkswap as needed.
 if [[ ($partition_devices = true || $format_devices = true) ]];then
     wipefs "${efi_partition}"
+    mkfs.vfat -F32 "${efi_partition}"
+
+    wipefs "${root_partition}"
+    mkfs.ext4 "${root_partition}"
+
     if [[ ( -v $swap_partition ) ]];then
         wipefs "${swap_partition}"
-    fi
-    wipefs "${root_partition}"
-
-    mkfs.vfat -F32 "${efi_partition}"
-    if [[ ( -v $swap_partition ) ]];then
         mkswap "${swap_partition}"
     fi
-    mkfs.ext4 "${root_partition}"
+
 fi
 
 if [[ -v $swap_partition ]];then

@@ -142,6 +142,9 @@ with the panel/toolbar of xfce, gnome, kde, or mate.
     `curl https://raw.githubusercontent.com/EricGebhart/Arch-Setup/master/install-arch  > ./install-arch`
  * Make it executable: `chmod a+x ./install-arch` 
  * Get help `./install-arch -h`
+    curl https://raw.githubusercontent.com/EricGebhart/Arch-Setup/master/install-arch  > ./install-arch`
+    chmod a+x ./install-arch` 
+    ./install-arch -h`
  
  * Partition and possibly format your drive or not.
 
@@ -242,23 +245,25 @@ Really, doing it all manually is not rocket science unless you are a newbie.
  A checklist is provided for what you might want to install from my packages and repos.
  
  Basic stuff like zsh dotfiles, .Xresources, my ~/bin folder, and emacs setup are
- in _Necessities_. After that there are some extra packages if you choose tablet or
- mobile studio pro.  High dpi is a group of settings which are added to .Xresources
+ in _Necessities_. After that there are some extra packages if you choose _tablet_ or
+ mobile studio pro.  _High dpi_ is a group of settings which are added to **.Xresources**
  by the dotfiles repo if you ask for it.  I need them for my Wacom mobile studio pro
- and my computer which uses a wacom cintiq for a monitor. Both have resolutions around
+ and another computer which uses a wacom cintiq for a monitor. Both have resolutions around
  3840x2160, the text is super tiny and the mouse pointer is invisible without these settings.
  
- I do not currently install a display manager like sddm.  I rely on *startx*.
- 
  Xorg and friends are always installed if you choose _Xmonad_ or _Xfce_. 
+ Dependencies between these choices is managed in the _Makefiles_.
  
 ### submodule repos used here are:
  
  * [arch-pkgs](http://github.com/ericgebhart/arch-pkgs) - My arch meta-packages.
  
 #### The Necessities choice
- 
- * necessities  - An Arch pkgbuild with various basic packages.
+
+The necessities package gets installed no matter what. Everything depends on it.
+It includes all the basic things you might need.
+
+ * necessities  - An Arch pkgbuild with various basic tools, wget, ssh, traceroute, emacs, vi, nano, etc..
  * [dotfiles](http://github.com/ericgebhart/dotfiles)  - My dotfiles, zsh, Xresources, and miscellaneous other things that mostly
    go into my _~/bin_ directory.  Includes a high DPI udate to _.Xresources_ if chosen.
  * [bc-extensions](http://github.com/ericgebhart/bc-extensions) which is a set of extensions for bc.

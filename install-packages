@@ -54,22 +54,25 @@ exec 2> >(tee "pkg-install.log")
 # create a menu.
 cmd=(dialog --stdout --separate-output --checklist "Select Packages to install" 22 77 16)
 options=(
-    1 "Necessities - utilities, yay, etc." on
+    1 "Necessities - shells, utilities, ssh, traceroute, yay, etc." on
     2 "X11 - xorg, libreOffice, vivaldi, etc."    on
-    3 "Xmonad - Haskell, xfce4-panel, etc." on
-    4 "dot files - (.zsh, .Xresources, .icons, etc" on
-    5 "Emacs, accomplices (isync, mu4e,...) and configuration"  on
-    6 "Xfce"   off
-    7 "development - clojure, python, ruby, racket, guile, etc."  on
-    8 "Tablet - Pen stuff - krita, cellwriter, onboard..." on
-    9 "Natural language - hunspell, languagetool, ..."   on
-    10 "Mobile Studio Pro - Nvidia, hidpi"  off
-    11 "High DPI screen, .Xresources mods, Resolution 3840x2160"    on
-    12 "Xmonad Xsession (requires sudo)"    off
-    13 "Account setup - dotfiles, emacs, Xmonad" off
-    14 "Anbox - run android in a container" off
-    15 "Enable Anbox - configure and enable the anbox daemons (requires sudo)" off
-    14 "All"    off )
+    3 "Xmonad - Haskell, polybar, etc." on
+    4 "dot files - (.zsh, .Xresources, .icons, ~/bin,  etc" on
+    5 "Emacs config with accomplices (isync, mu4e,...)"  on
+    6 "Emacs config sans accomplices"  off
+    7 "Xfce"   off
+    8 "development - clojure, python, ruby, racket, guile, etc."  on
+    9 "Tablet - Pen stuff - krita, cellwriter, onboard..." on
+    10 "Natural language - hunspell, languagetool, ..."   on
+    11 "Mobile Studio Pro - Nvidia, hidpi"  off
+    12 "High DPI screen, .Xresources mods, Resolution 3840x2160"    on
+    13 "Xmonad Xsession (requires sudo)"    off
+    14 "Account setup - dotfiles, emacs, Xmonad" off
+    15 "Anbox - run android in a container" off
+    16 "Enable Anbox - configure and enable the anbox daemons (requires sudo)" off
+    17 "Iot - particle.io-cli, dfu-util, python..." off
+
+    17 "All"    off )
 
 # display menu and get the choices
 choices=$("${cmd[@]}" "${options[@]}")
@@ -79,7 +82,7 @@ for choice in ${choices[@]}
 do
     case $choice in
         1)
-            make necessities
+            make base
             ;;
         2)
             make X11
@@ -91,39 +94,45 @@ do
             make dotfiles
             ;;
         5)
-            make emacs-setup
+            make emacs-setup-w-extras
             ;;
         6)
-            make Xfce
+            make emacs-setup
             ;;
         7)
-            make devel
+            make Xfce
             ;;
         8)
-            make tablet
+            make devel
             ;;
         9)
-            make natural-language
+            make tablet
             ;;
         10)
-            make mobile-studio-pro
+            make natural-language
             ;;
         11)
-            make hidpi
+            make mobile-studio-pro
             ;;
         12)
-            make -C xmonad-setup xsession
+            make hidpi
             ;;
         13)
-            make account
+            make -C xmonad-setup xsession
             ;;
         14)
-            make anbox
+            make account
             ;;
         15)
-            make -C dotfiles enable-anbox
+            make anbox
             ;;
         16)
+            make -C dotfiles enable-anbox
+            ;;
+        17)
+            make Iot
+            ;;
+        18)
             make all
             ;;
     esac

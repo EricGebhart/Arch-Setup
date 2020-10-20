@@ -20,6 +20,9 @@ $(packages):
 $(repos):
 	$(MAKE) -C $@ install
 
+Iot:
+	$(MAKE) -C arch-pkgs Iot
+
 hidpi:
 	$(MAKE) -C dotfiles hidpi
 
@@ -35,12 +38,16 @@ xmonad-log-applet: Xmonad
 	$(MAKE) -C $@
 	$(MAKE) -C $@ install
 
+emacs-setup-w-extras: emacs-setup emacs-pkg-setup
+	$(MAKE) -C emacs-setup mu4e
+	$(MAKE) -C emacs-setup mbsync
+
 dotfiles: bc-extensions onboard-layouts
-emacs-setup: emacs-pkg-setup
 xmonad-setup: Xmonad xmonad-log-applet
 mobile-studio-pro: hidpi
 
-base: necessities X11 emacs-setup dotfiles xmonad-setup
+base: necessities emacs-setup dotfiles
+X11: necessities X11 emacs-setup dotfiles xmonad-setup
 account: dotfiles emacs-setup xmonad-setup
 
 git-sub-update:
