@@ -20,7 +20,7 @@ $(packages):
 $(repos):
 	$(MAKE) -C $@ install
 
-Iot:
+particleCLI:
 	$(MAKE) -C arch-pkgs Iot
 
 hidpi:

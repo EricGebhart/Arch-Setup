@@ -15,6 +15,8 @@ root_partition=''
 swap_partition=''
 locale='en_US.utf8'
 locale='en_US.utf8'
+boot_opts='acpi=off nomodeset'
+blacklist=''
 ## timezone='Europe/Paris'
 timezone='America/New York'
 user='eric'
@@ -54,6 +56,11 @@ help(){
     printf 'calculated from the device name.\n'
     printf 'efi, root and swap devices are only needed if auto formatting'
     printf 'is not used.\n'
+    printf '\n '
+    printf 'Use `lsblk` to show your block devices.'
+    printf 'Use fdisk beforehand to create a 512m EFI partition and a root partition.\n'
+    printf 'If installing on a chromebook doing partitioning (fdisk) and formatting manually'
+    printf ' is recommended.\n'
 
 
     printf '\n '
@@ -68,6 +75,7 @@ help(){
     printf " -t timezone  timezone, /usr/share/zoneinfo/<region/city>. default: $timezone\n"
     printf " -T           prompt for zoneinfo, default: $timezone\n"
     printf " -u user      user name for new admin account, default $user\n"
+    printf " -o bootopts  ie. acpi=off nomodeset, default: $boot_options \n"
     printf ' -h           This help text.\n'
     printf '\n '
     printf '\n '
@@ -77,7 +85,7 @@ help(){
 
 # $opt will hold the current option
 opt=''
-while getopts d:s:e:r:Fl:hl:u:n:t:TPh opt; do
+while getopts d:s:e:r:Fl:hl:u:n:t:o:b:TPh opt; do
     # loop continues till options finished
     # see which pattern $opt matches...
     case $opt in
@@ -114,6 +122,9 @@ while getopts d:s:e:r:Fl:hl:u:n:t:TPh opt; do
             ;;
         (u)
             user=$OPTARG
+            ;;
+        (o)
+            boot_options=$OPTARG
             ;;
         (h)
             help
@@ -290,9 +301,9 @@ echo "/etc/hosts!!!"
 cat /etc/hosts
 echo '======================================================================='
 
-echo "$locale -> /etc/locale.conf - locale-gen"
+echo "$locale -> /etc/locale.gen - locale-gen"
 echo " See https://wiki.archlinux.org/index.php/Installation_guide#Localization"
-arch-chroot /mnt echo "LANG=${locale}" > /mnt/etc/locale.conf
+arch-chroot /mnt echo "LANG=${locale}" >> /mnt/etc/locale.gen
 arch-chroot /mnt locale-gen
 echo '======================================================================='
 
@@ -317,8 +328,14 @@ cat <<EOF > /mnt/boot/loader/entries/arch.conf
 title    Arch Linux
 linux    /vmlinuz-linux
 initrd   /initramfs-linux.img
-options  root=PARTUUID=$(blkid -s PARTUUID -o value "$root_partition") rw acpi=off
+options  root=PARTUUID=$(blkid -s PARTUUID -o value "$root_partition") rw $boot_options
 EOF
+
+# if [[ -z $blacklist ]];then
+#     for module in ${(z)blacklist}; do
+#         echo "blacklist $module >> /etc/modprobe.d/blacklist.conf
+#     done
+# fi
 
 arch-chroot /mnt bootctl list
 
@@ -359,8 +376,8 @@ arch-chroot -u "$user" /mnt git clone --remote-submodules --recurse-submodules h
 arch-chroot /mnt systemctl enable NetworkManager
 echo "#nomenu" > /mnt/home/$user/.zshrc
 echo "cd Arch-Setup; nmtui; ./install-packages" > /mnt/home/$user/.zlogin
-arch-chroot /mnt chown eric:eric /home/$user/.zshrc
-arch-chroot /mnt chown eric:eric /home/$user/.zlogin
+arch-chroot /mnt chown $user:$user /home/$user/.zshrc
+arch-chroot /mnt chown $user:$user /home/$user/.zlogin
 
 
 echo '======================================================================='

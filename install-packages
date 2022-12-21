@@ -70,9 +70,9 @@ options=(
     14 "Account setup - dotfiles, emacs, Xmonad" off
     15 "Anbox - run android in a container" off
     16 "Enable Anbox - configure and enable the anbox daemons (requires sudo)" off
-    17 "Iot - particle.io-cli, dfu-util, python..." off
+    17 "Particle CLI - particle.io-cli, dfu-util, python..." off
 
-    17 "All"    off )
+    18 "All"    off )
 
 # display menu and get the choices
 choices=$("${cmd[@]}" "${options[@]}")
@@ -130,7 +130,7 @@ do
             make -C dotfiles enable-anbox
             ;;
         17)
-            make Iot
+            make particleCLI
             ;;
         18)
             make all
