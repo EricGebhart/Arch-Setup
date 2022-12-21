@@ -3,11 +3,6 @@
 	url = http://github.com/ericgebhart/arch-pkgs
 	branch = master
 	update = rebase
-[submodule "emacs-setup"]
-	path = emacs-setup
-	url = http://github.com/ericgebhart/emacs-setup
-	branch = master
-	update = rebase
 [submodule "xmonad-setup"]
 	path = xmonad-setup
 	url = http://github.com/ericgebhart/xmonad-setup
