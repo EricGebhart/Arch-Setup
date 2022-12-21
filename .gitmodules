@@ -5,7 +5,7 @@
 	update = rebase
 [submodule "emacs-setup"]
 	path = emacs-setup
-	url = http://github.com/ericgebhart/emacs-setup
+	url = git@github.com:ericgebhart/emacs-setup.git
 	branch = master
 	update = rebase
 [submodule "xmonad-setup"]
